@@ -31,13 +31,16 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["provider"], "local-fallback")
         self.assertEqual(payload["executor"], "local-shell")
 
-    def test_orchestration_status_exposes_v2_0_1_foundation(self) -> None:
+    def test_orchestration_status_exposes_v2_0_2_runtime_consumption(self) -> None:
         response = self.client.get("/orchestration/status")
         self.assertEqual(response.status_code, 200)
         payload = response.json()
-        self.assertEqual(payload["version"], "v2.0.1")
+        self.assertEqual(payload["version"], "v2.0.2")
+        self.assertEqual(payload["foundation_version"], "v2.0.1")
         services = {service["service"] for service in payload["services"]}
         self.assertIn("assist", services)
+        runtime_services = {service["key"] for service in payload["runtime_services"]}
+        self.assertIn("runtime.capability-registry", runtime_services)
 
 
 if __name__ == "__main__":

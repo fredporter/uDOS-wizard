@@ -4,7 +4,22 @@ from __future__ import annotations
 class OrchestrationRegistry:
     def status(self) -> dict:
         return {
-            "version": "v2.0.1",
+            "version": "v2.0.2",
+            "foundation_version": "v2.0.1",
+            "runtime_services": [
+                {
+                    "key": "runtime.capability-registry",
+                    "owner": "uDOS-core",
+                    "consumer": "uDOS-wizard",
+                    "usage": "provider and assist routing metadata",
+                },
+                {
+                    "key": "runtime.release-lanes",
+                    "owner": "uDOS-core",
+                    "consumer": "uDOS-wizard",
+                    "usage": "promotion-aware orchestration reporting",
+                },
+            ],
             "services": [
                 {
                     "service": "assist",
