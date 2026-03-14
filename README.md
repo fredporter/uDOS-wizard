@@ -35,6 +35,13 @@ Network-facing assist, provider, MCP, and bounded autonomy services for uDOS v2.
 ## Local Development
 
 Treat external providers as adapters behind stable public contracts.
+Use `scripts/run-wizard-checks.sh` as the default local validation entrypoint.
+
+## Activation References
+
+- `docs/activation.md`
+- `examples/basic-wizard-session.md`
+- `scripts/run-wizard-checks.sh`
 
 ## Family Relation
 
