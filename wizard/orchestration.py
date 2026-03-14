@@ -58,6 +58,20 @@ class OrchestrationRegistry:
     def route(self, task: str, mode: str = "auto", surface: str = "assist") -> dict:
         return route_task(task=task, mode=mode, surface=surface)
 
+    def workflow_plan(self, objective: str, mode: str = "auto") -> dict:
+        steps = [
+            route_task(task="remote-control", mode=mode, surface="remote-control"),
+            route_task(task="google-workspace-mirror", mode=mode, surface="sync"),
+        ]
+        return {
+            "plan_version": "v2.0.2",
+            "objective": objective,
+            "mode": mode,
+            "owner": "uDOS-wizard",
+            "steps": steps,
+            "step_count": len(steps),
+        }
+
 
 def _usage_for_service(key: str) -> str:
     if key == "runtime.capability-registry":

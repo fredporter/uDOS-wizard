@@ -57,6 +57,19 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["request"]["surface"], "remote-control")
         self.assertEqual(payload["route_contract"]["owner"], "uDOS-wizard")
 
+    def test_orchestration_workflow_plan_returns_shared_steps(self) -> None:
+        response = self.client.get(
+            "/orchestration/workflow-plan",
+            params={"objective": "shared-remote-flow", "mode": "auto"},
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["plan_version"], "v2.0.2")
+        self.assertEqual(payload["step_count"], 2)
+        surfaces = {step["surface"] for step in payload["steps"]}
+        self.assertIn("remote-control", surfaces)
+        self.assertIn("sync", surfaces)
+
 
 if __name__ == "__main__":
     unittest.main()

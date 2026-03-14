@@ -38,6 +38,10 @@ def orchestration_status():
 def orchestration_dispatch(task: str = "demo", mode: str = "auto", surface: str = "assist"):
     return orchestration.route(task=task, mode=mode, surface=surface)
 
+@app.get("/orchestration/workflow-plan")
+def orchestration_workflow_plan(objective: str = "shared-remote-flow", mode: str = "auto"):
+    return orchestration.workflow_plan(objective=objective, mode=mode)
+
 @app.get("/beacon/announce")
 def beacon_announce():
     return beacon.announce()
