@@ -5,12 +5,14 @@ from .assist import route_assist
 from .budget import BudgetPolicy
 from .mcp_registry import MCPRegistry
 from .beacon import BeaconNode
+from .orchestration import OrchestrationRegistry
 
 app = FastAPI(title="uDOS Wizard Kernel")
 
 budget = BudgetPolicy()
 registry = MCPRegistry()
 beacon = BeaconNode()
+orchestration = OrchestrationRegistry()
 
 @app.get("/")
 def root():
@@ -27,6 +29,10 @@ def get_budget():
 @app.get("/mcp/tools")
 def list_tools():
     return registry.list_tools()
+
+@app.get("/orchestration/status")
+def orchestration_status():
+    return orchestration.status()
 
 @app.get("/beacon/announce")
 def beacon_announce():

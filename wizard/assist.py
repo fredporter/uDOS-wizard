@@ -1,10 +1,5 @@
 from __future__ import annotations
+from .orchestration import route_task
 
 def route_assist(task: str, mode: str = "auto") -> dict:
-    provider = "local-fallback" if mode == "offline" else "wizard-provider"
-    return {
-        "task": task,
-        "mode": mode,
-        "provider": provider,
-        "status": "queued"
-    }
+    return route_task(task=task, mode=mode, surface="assist")

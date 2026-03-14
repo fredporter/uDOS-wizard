@@ -40,6 +40,7 @@ Use `scripts/run-wizard-checks.sh` as the default local validation entrypoint.
 ## Activation References
 
 - `docs/activation.md`
+- `docs/v2.0.1-orchestration-foundation.md`
 - `examples/basic-wizard-session.md`
 - `scripts/run-wizard-checks.sh`
 

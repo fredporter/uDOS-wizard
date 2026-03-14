@@ -29,6 +29,15 @@ class APIContractTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual(payload["task"], "demo")
         self.assertEqual(payload["provider"], "local-fallback")
+        self.assertEqual(payload["executor"], "local-shell")
+
+    def test_orchestration_status_exposes_v2_0_1_foundation(self) -> None:
+        response = self.client.get("/orchestration/status")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["version"], "v2.0.1")
+        services = {service["service"] for service in payload["services"]}
+        self.assertIn("assist", services)
 
 
 if __name__ == "__main__":
