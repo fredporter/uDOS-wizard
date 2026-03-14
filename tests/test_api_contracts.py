@@ -43,6 +43,17 @@ class APIContractTests(unittest.TestCase):
         runtime_services = {service["key"] for service in payload["runtime_services"]}
         self.assertIn("runtime.capability-registry", runtime_services)
 
+    def test_orchestration_dispatch_accepts_surface(self) -> None:
+        response = self.client.get(
+            "/orchestration/dispatch",
+            params={"task": "remote-control", "mode": "auto", "surface": "remote-control"},
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["task"], "remote-control")
+        self.assertEqual(payload["surface"], "remote-control")
+        self.assertEqual(payload["provider"], "wizard-provider")
+
 
 if __name__ == "__main__":
     unittest.main()

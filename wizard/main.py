@@ -34,6 +34,10 @@ def list_tools():
 def orchestration_status():
     return orchestration.status()
 
+@app.get("/orchestration/dispatch")
+def orchestration_dispatch(task: str = "demo", mode: str = "auto", surface: str = "assist"):
+    return orchestration.route(task=task, mode=mode, surface=surface)
+
 @app.get("/beacon/announce")
 def beacon_announce():
     return beacon.announce()

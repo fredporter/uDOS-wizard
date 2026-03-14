@@ -55,6 +55,9 @@ class OrchestrationRegistry:
             "mcp_bridge": "starter",
         }
 
+    def route(self, task: str, mode: str = "auto", surface: str = "assist") -> dict:
+        return route_task(task=task, mode=mode, surface=surface)
+
 
 def _usage_for_service(key: str) -> str:
     if key == "runtime.capability-registry":
