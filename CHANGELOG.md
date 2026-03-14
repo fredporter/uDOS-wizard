@@ -10,3 +10,5 @@ All notable changes to `uDOS-wizard` should be documented in this file.
 - switched wizard runtime-service consumption to the shared Core contract artifact
 - added shared `/orchestration/dispatch` routing for cross-product Round B flows
 - standardized `/orchestration/dispatch` on a common request and route contract
+- added `/orchestration/workflow-plan` for shared Round B remote workflow planning
+- added callback and result routes for end-to-end Round B dispatch reporting
