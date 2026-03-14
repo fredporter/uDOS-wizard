@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import tempfile
 import unittest
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
 from wizard.main import app
+from wizard.orchestration import OrchestrationRegistry
 
 
 class APIContractTests(unittest.TestCase):
@@ -40,6 +43,8 @@ class APIContractTests(unittest.TestCase):
         self.assertTrue(payload["runtime_service_source"].endswith("uDOS-core/contracts/runtime-services.json"))
         self.assertTrue(payload["orchestration_contract_source"].endswith("uDOS-wizard/contracts/orchestration-contract.json"))
         self.assertEqual(payload["orchestration_contract_version"], "v2.0.2")
+        self.assertTrue(payload["result_store_path"].endswith("uDOS-wizard/memory/orchestration-results.json"))
+        self.assertEqual(payload["result_store_mode"], "file-json")
         services = {service["service"] for service in payload["services"]}
         self.assertIn("assist", services)
         runtime_services = {service["key"] for service in payload["runtime_services"]}
@@ -101,6 +106,22 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(result_payload["dispatch_id"], dispatch_id)
         self.assertEqual(result_payload["status"], "completed")
         self.assertEqual(result_payload["result"]["summary"], "ok")
+
+    def test_orchestration_result_store_persists_across_registry_instances(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            store_path = Path(temp_dir) / "orchestration-results.json"
+            writer = OrchestrationRegistry(result_store_path=store_path)
+            payload = writer.record_result(
+                dispatch_id="dispatch:remote-control:auto",
+                status="completed",
+                result={"summary": "persisted"},
+            )
+            self.assertEqual(payload["result"]["summary"], "persisted")
+
+            reader = OrchestrationRegistry(result_store_path=store_path)
+            restored = reader.get_result("dispatch:remote-control:auto")
+            self.assertEqual(restored["status"], "completed")
+            self.assertEqual(restored["result"]["summary"], "persisted")
 
 
 if __name__ == "__main__":

@@ -21,8 +21,23 @@ def _load_orchestration_contract() -> dict:
 
 
 class OrchestrationRegistry:
-    def __init__(self) -> None:
-        self._results: dict[str, dict] = {}
+    def __init__(self, result_store_path: Path | None = None) -> None:
+        self._result_store_path = result_store_path or (
+            Path(__file__).resolve().parents[1] / "memory" / "orchestration-results.json"
+        )
+        self._results = self._load_results()
+
+    def _load_results(self) -> dict[str, dict]:
+        if not self._result_store_path.exists():
+            return {}
+        return json.loads(self._result_store_path.read_text(encoding="utf-8"))
+
+    def _persist_results(self) -> None:
+        self._result_store_path.parent.mkdir(parents=True, exist_ok=True)
+        self._result_store_path.write_text(
+            json.dumps(self._results, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
 
     def status(self) -> dict:
         manifest = _load_runtime_services()
@@ -47,6 +62,8 @@ class OrchestrationRegistry:
             "runtime_service_source": str(_runtime_service_source()),
             "orchestration_contract_source": str(_orchestration_contract_source()),
             "orchestration_contract_version": contract["version"],
+            "result_store_path": str(self._result_store_path),
+            "result_store_mode": "file-json",
             "runtime_services": runtime_services,
             "services": [
                 {
@@ -98,6 +115,7 @@ class OrchestrationRegistry:
             "result_route": contract["routes"]["result"]["path_template"].replace("{dispatch_id}", dispatch_id),
         }
         self._results[dispatch_id] = payload
+        self._persist_results()
         return payload
 
     def get_result(self, dispatch_id: str) -> dict:

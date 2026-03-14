@@ -13,3 +13,4 @@ All notable changes to `uDOS-wizard` should be documented in this file.
 - added `/orchestration/workflow-plan` for shared Round B remote workflow planning
 - added callback and result routes for end-to-end Round B dispatch reporting
 - packaged Wizard orchestration routes and response shapes for non-sibling consumption
+- persisted Wizard dispatch results to a file-backed local store for `v2.0.2` release completion

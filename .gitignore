@@ -13,3 +13,4 @@ coverage/
 .vscode/
 DerivedData/
 .gradle/
+memory/
