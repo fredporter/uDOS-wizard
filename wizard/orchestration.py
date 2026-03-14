@@ -1,25 +1,39 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
+
+def _runtime_service_source() -> Path:
+    return Path(__file__).resolve().parents[2] / "uDOS-core" / "contracts" / "runtime-services.json"
+
+
+def _load_runtime_services() -> dict:
+    return json.loads(_runtime_service_source().read_text(encoding="utf-8"))
+
 
 class OrchestrationRegistry:
     def status(self) -> dict:
+        manifest = _load_runtime_services()
+        runtime_services = []
+        for service in manifest["services"]:
+            if "uDOS-wizard" not in service.get("consumers", []):
+                continue
+            runtime_services.append(
+                {
+                    "key": service["key"],
+                    "owner": service["owner"],
+                    "route": service["route"],
+                    "stability": service["stability"],
+                    "consumer": "uDOS-wizard",
+                    "usage": _usage_for_service(service["key"]),
+                }
+            )
         return {
-            "version": "v2.0.2",
-            "foundation_version": "v2.0.1",
-            "runtime_services": [
-                {
-                    "key": "runtime.capability-registry",
-                    "owner": "uDOS-core",
-                    "consumer": "uDOS-wizard",
-                    "usage": "provider and assist routing metadata",
-                },
-                {
-                    "key": "runtime.release-lanes",
-                    "owner": "uDOS-core",
-                    "consumer": "uDOS-wizard",
-                    "usage": "promotion-aware orchestration reporting",
-                },
-            ],
+            "version": manifest["version"],
+            "foundation_version": manifest["extends"],
+            "runtime_service_source": str(_runtime_service_source()),
+            "runtime_services": runtime_services,
             "services": [
                 {
                     "service": "assist",
@@ -40,6 +54,14 @@ class OrchestrationRegistry:
             "providers": ["wizard-provider", "local-fallback"],
             "mcp_bridge": "starter",
         }
+
+
+def _usage_for_service(key: str) -> str:
+    if key == "runtime.capability-registry":
+        return "provider and assist routing metadata"
+    if key == "runtime.release-lanes":
+        return "promotion-aware orchestration reporting"
+    return "shared platform contract consumption"
 
 
 def route_task(task: str, mode: str = "auto", surface: str = "assist") -> dict:

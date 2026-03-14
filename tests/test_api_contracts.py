@@ -37,6 +37,7 @@ class APIContractTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual(payload["version"], "v2.0.2")
         self.assertEqual(payload["foundation_version"], "v2.0.1")
+        self.assertTrue(payload["runtime_service_source"].endswith("uDOS-core/contracts/runtime-services.json"))
         services = {service["service"] for service in payload["services"]}
         self.assertIn("assist", services)
         runtime_services = {service["key"] for service in payload["runtime_services"]}
