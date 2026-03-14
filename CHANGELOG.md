@@ -9,3 +9,4 @@ All notable changes to `uDOS-wizard` should be documented in this file.
 - added `v2.0.2` runtime-service consumption reporting to orchestration status
 - switched wizard runtime-service consumption to the shared Core contract artifact
 - added shared `/orchestration/dispatch` routing for cross-product Round B flows
+- standardized `/orchestration/dispatch` on a common request and route contract

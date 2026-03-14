@@ -68,34 +68,42 @@ def _usage_for_service(key: str) -> str:
 
 
 def route_task(task: str, mode: str = "auto", surface: str = "assist") -> dict:
+    request = {"task": task, "mode": mode, "surface": surface}
+
     if mode == "offline":
         return {
-            "task": task,
-            "mode": mode,
-            "surface": surface,
+            "dispatch_version": "v2.0.2",
+            "request": request,
+            "dispatch_id": f"dispatch:{surface}:{task}:{mode}",
             "provider": "local-fallback",
             "executor": "local-shell",
             "transport": "subprocess",
             "status": "queued",
+            "route_contract": {"owner": "uDOS-wizard", "surface": surface, "mode": mode},
+            **request,
         }
 
     if surface == "publish":
         return {
-            "task": task,
-            "mode": mode,
-            "surface": surface,
+            "dispatch_version": "v2.0.2",
+            "request": request,
+            "dispatch_id": f"dispatch:{surface}:{task}:{mode}",
             "provider": "wizard-provider",
             "executor": "publish-runner",
             "transport": "job-queue",
             "status": "queued",
+            "route_contract": {"owner": "uDOS-wizard", "surface": surface, "mode": mode},
+            **request,
         }
 
     return {
-        "task": task,
-        "mode": mode,
-        "surface": surface,
+        "dispatch_version": "v2.0.2",
+        "request": request,
+        "dispatch_id": f"dispatch:{surface}:{task}:{mode}",
         "provider": "wizard-provider",
         "executor": "provider-router",
         "transport": "https",
         "status": "queued",
+        "route_contract": {"owner": "uDOS-wizard", "surface": surface, "mode": mode},
+        **request,
     }

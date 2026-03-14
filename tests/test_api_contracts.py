@@ -53,6 +53,9 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["task"], "remote-control")
         self.assertEqual(payload["surface"], "remote-control")
         self.assertEqual(payload["provider"], "wizard-provider")
+        self.assertEqual(payload["dispatch_version"], "v2.0.2")
+        self.assertEqual(payload["request"]["surface"], "remote-control")
+        self.assertEqual(payload["route_contract"]["owner"], "uDOS-wizard")
 
 
 if __name__ == "__main__":
