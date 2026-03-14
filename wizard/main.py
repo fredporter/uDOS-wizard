@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 import uvicorn
 
 from .assist import route_assist
@@ -41,6 +41,20 @@ def orchestration_dispatch(task: str = "demo", mode: str = "auto", surface: str 
 @app.get("/orchestration/workflow-plan")
 def orchestration_workflow_plan(objective: str = "shared-remote-flow", mode: str = "auto"):
     return orchestration.workflow_plan(objective=objective, mode=mode)
+
+
+@app.post("/orchestration/callback")
+def orchestration_callback(payload: dict = Body(...)):
+    return orchestration.record_result(
+        dispatch_id=payload.get("dispatch_id", "dispatch:unknown"),
+        status=payload.get("status", "completed"),
+        result=payload.get("result", {}),
+    )
+
+
+@app.get("/orchestration/result/{dispatch_id}")
+def orchestration_result(dispatch_id: str):
+    return orchestration.get_result(dispatch_id)
 
 @app.get("/beacon/announce")
 def beacon_announce():

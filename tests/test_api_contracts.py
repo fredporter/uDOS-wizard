@@ -38,6 +38,8 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["version"], "v2.0.2")
         self.assertEqual(payload["foundation_version"], "v2.0.1")
         self.assertTrue(payload["runtime_service_source"].endswith("uDOS-core/contracts/runtime-services.json"))
+        self.assertTrue(payload["orchestration_contract_source"].endswith("uDOS-wizard/contracts/orchestration-contract.json"))
+        self.assertEqual(payload["orchestration_contract_version"], "v2.0.2")
         services = {service["service"] for service in payload["services"]}
         self.assertIn("assist", services)
         runtime_services = {service["key"] for service in payload["runtime_services"]}
@@ -56,6 +58,7 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["dispatch_version"], "v2.0.2")
         self.assertEqual(payload["request"]["surface"], "remote-control")
         self.assertEqual(payload["route_contract"]["owner"], "uDOS-wizard")
+        self.assertEqual(payload["callback_contract"]["route"], "/orchestration/callback")
 
     def test_orchestration_workflow_plan_returns_shared_steps(self) -> None:
         response = self.client.get(
@@ -66,9 +69,38 @@ class APIContractTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual(payload["plan_version"], "v2.0.2")
         self.assertEqual(payload["step_count"], 2)
+        self.assertTrue(payload["contract_source"].endswith("uDOS-wizard/contracts/orchestration-contract.json"))
         surfaces = {step["surface"] for step in payload["steps"]}
         self.assertIn("remote-control", surfaces)
         self.assertIn("sync", surfaces)
+
+    def test_orchestration_callback_and_result_round_trip(self) -> None:
+        dispatch = self.client.get(
+            "/orchestration/dispatch",
+            params={"task": "remote-control", "mode": "auto", "surface": "remote-control"},
+        ).json()
+        dispatch_id = dispatch["dispatch_id"]
+
+        callback = self.client.post(
+            "/orchestration/callback",
+            json={
+                "dispatch_id": dispatch_id,
+                "status": "completed",
+                "result": {"summary": "ok"},
+            },
+        )
+        self.assertEqual(callback.status_code, 200)
+        callback_payload = callback.json()
+        self.assertEqual(callback_payload["dispatch_id"], dispatch_id)
+        self.assertEqual(callback_payload["status"], "completed")
+        self.assertEqual(callback_payload["callback_version"], "v2.0.2")
+
+        result = self.client.get(f"/orchestration/result/{dispatch_id}")
+        self.assertEqual(result.status_code, 200)
+        result_payload = result.json()
+        self.assertEqual(result_payload["dispatch_id"], dispatch_id)
+        self.assertEqual(result_payload["status"], "completed")
+        self.assertEqual(result_payload["result"]["summary"], "ok")
 
 
 if __name__ == "__main__":

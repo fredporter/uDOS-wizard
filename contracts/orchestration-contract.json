@@ -1,0 +1,76 @@
+{
+  "version": "v2.0.2",
+  "owner": "uDOS-wizard",
+  "package": "wizard-orchestration-contract",
+  "routes": {
+    "status": {
+      "method": "GET",
+      "path": "/orchestration/status"
+    },
+    "dispatch": {
+      "method": "GET",
+      "path": "/orchestration/dispatch",
+      "query": [
+        "task",
+        "mode",
+        "surface"
+      ]
+    },
+    "workflow_plan": {
+      "method": "GET",
+      "path": "/orchestration/workflow-plan",
+      "query": [
+        "objective",
+        "mode"
+      ]
+    },
+    "callback": {
+      "method": "POST",
+      "path": "/orchestration/callback",
+      "body": [
+        "dispatch_id",
+        "status",
+        "result"
+      ]
+    },
+    "result": {
+      "method": "GET",
+      "path_template": "/orchestration/result/{dispatch_id}"
+    }
+  },
+  "dispatch_contract": {
+    "dispatch_version": "v2.0.2",
+    "required_fields": [
+      "dispatch_version",
+      "dispatch_id",
+      "request",
+      "provider",
+      "executor",
+      "transport",
+      "status",
+      "route_contract",
+      "callback_contract"
+    ]
+  },
+  "workflow_plan_contract": {
+    "plan_version": "v2.0.2",
+    "required_fields": [
+      "plan_version",
+      "objective",
+      "mode",
+      "owner",
+      "steps",
+      "step_count"
+    ]
+  },
+  "callback_contract": {
+    "callback_version": "v2.0.2",
+    "required_fields": [
+      "dispatch_id",
+      "status",
+      "result",
+      "callback_version",
+      "result_route"
+    ]
+  }
+}
