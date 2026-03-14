@@ -11,6 +11,15 @@ uDOS-wizard is the network and assistance layer for the public family.
 - `services/runtime/beacon/` holds control-plane surfaces.
 - `mcp/` contains Model Context Protocol bridge work.
 
+## Contract Edges
+
+- `uDOS-core` remains the source of canonical semantics.
+- `uHOME-server` consumes Wizard networking contracts for local-network pairing,
+  Beacon access, and LAN-adjacent workflows.
+- `uHOME-empire` consumes Wizard networking and provider bridge contracts when
+  syncing beyond the local network to remote services such as Google or
+  HubSpot.
+
 ## Current Activation Lane
 
 The current active Wizard lane is intentionally small:

@@ -9,5 +9,12 @@ without a full provider stack:
 - budgeting policy
 - Beacon helpers
 - MCP registry
+- API contracts over those helper surfaces
 
 Use this root for higher-level adapter and API tests as the repo matures.
+
+Current rule:
+
+- keep tests small and contract-focused
+- prefer helper and API-surface checks before provider-runtime breadth
+- use mocks or local fallbacks instead of assuming live provider access

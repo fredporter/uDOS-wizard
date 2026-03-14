@@ -45,4 +45,7 @@ Use `scripts/run-wizard-checks.sh` as the default local validation entrypoint.
 
 ## Family Relation
 
-Wizard enriches and transports work but should converge on Core semantics.
+Wizard enriches and transports work but should converge on Core semantics. It
+supports `uHOME-server` local-network pairing surfaces and `uHOME-empire`
+online networking or provider-facing integrations without owning their runtime
+behavior.
