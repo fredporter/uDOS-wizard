@@ -16,3 +16,5 @@ All notable changes to `uDOS-wizard` should be documented in this file.
 - persisted Wizard dispatch results to a file-backed local store for `v2.0.2` release completion
 - added `uDOS-grid` consumption routes for Grid contract inspection, seed inspection, and starter place validation
 - started `v2.0.4` Wizard networking boundary lock with a documented shell-to-Wizard `/assist` handoff and explicit ownership rules for provider routing and secrets
+- documented the sibling direct-call route set and secret-backed bridge lanes for `uHOME-server` and `uHOME-empire`
+- implemented the first v2 OK provider control-plane slice: provider manifests, registry/routing engine, and `/ok/*` API routes plus MCP split policy surface
