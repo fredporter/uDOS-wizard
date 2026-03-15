@@ -15,3 +15,4 @@ All notable changes to `uDOS-wizard` should be documented in this file.
 - packaged Wizard orchestration routes and response shapes for non-sibling consumption
 - persisted Wizard dispatch results to a file-backed local store for `v2.0.2` release completion
 - added `uDOS-grid` consumption routes for Grid contract inspection, seed inspection, and starter place validation
+- started `v2.0.4` Wizard networking boundary lock with a documented shell-to-Wizard `/assist` handoff and explicit ownership rules for provider routing and secrets
