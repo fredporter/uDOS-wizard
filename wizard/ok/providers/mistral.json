@@ -1,0 +1,20 @@
+{
+  "provider_id": "wizard.mistral",
+  "provider_class": "ok_provider",
+  "network_required": true,
+  "models": [
+    "mistral-small",
+    "mistral-medium"
+  ],
+  "capabilities": [
+    "summarization",
+    "classification",
+    "drafting",
+    "analysis"
+  ],
+  "budget_group": "tier0_free",
+  "retry_policy": "fallback_provider",
+  "cache_policy": "enabled",
+  "approval_required": false,
+  "enabled": true
+}

@@ -1,0 +1,20 @@
+{
+  "provider_id": "wizard.gemini",
+  "provider_class": "ok_provider",
+  "network_required": true,
+  "models": [
+    "gemini-1.5-pro",
+    "gemini-1.5-flash"
+  ],
+  "capabilities": [
+    "multimodal",
+    "reasoning",
+    "long_context",
+    "classification"
+  ],
+  "budget_group": "tier2_premium",
+  "retry_policy": "cooldown_window",
+  "cache_policy": "enabled",
+  "approval_required": false,
+  "enabled": true
+}

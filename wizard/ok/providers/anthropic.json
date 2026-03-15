@@ -1,0 +1,21 @@
+{
+  "provider_id": "wizard.anthropic",
+  "provider_class": "ok_provider",
+  "network_required": true,
+  "models": [
+    "claude-sonnet",
+    "claude-opus"
+  ],
+  "capabilities": [
+    "reasoning",
+    "analysis",
+    "summarization",
+    "drafting",
+    "long_context"
+  ],
+  "budget_group": "tier2_premium",
+  "retry_policy": "cooldown_window",
+  "cache_policy": "enabled",
+  "approval_required": false,
+  "enabled": true
+}

@@ -1,0 +1,21 @@
+{
+  "provider_id": "wizard.openai",
+  "provider_class": "ok_provider",
+  "network_required": true,
+  "models": [
+    "gpt-4o-mini",
+    "gpt-4.1"
+  ],
+  "capabilities": [
+    "reasoning",
+    "drafting",
+    "code_generation",
+    "multimodal",
+    "transformation"
+  ],
+  "budget_group": "tier1_economy",
+  "retry_policy": "cooldown_window",
+  "cache_policy": "enabled",
+  "approval_required": false,
+  "enabled": true
+}

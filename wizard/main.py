@@ -37,6 +37,9 @@ from .render_preview import (
 )
 from .runtime_config import get_runtime_config, runtime_config_metadata, runtime_config_snapshot
 from .secret_store import get_secret_store
+from .ok.provider_registry import ProviderRegistry
+from .ok.routing_engine import OKProviderRoutingEngine
+from .ok.mcp_policy import mcp_split_policy
 from .uhome_bridge import (
     automation_jobs as fetch_uhome_automation_jobs,
     automation_results as fetch_uhome_automation_results,
@@ -65,6 +68,8 @@ static_root = Path(__file__).resolve().parents[1] / "static"
 rendered_root = get_path("UDOS_RENDER_ROOT")
 wizard_ui_dist_root = Path(__file__).resolve().parents[1] / "apps" / "wizard-ui" / "dist"
 runtime_bind_status = configured_runtime_bind_status()
+ok_provider_registry = ProviderRegistry()
+ok_routing_engine = OKProviderRoutingEngine(ok_provider_registry)
 
 if static_root.exists():
     app.mount("/ui-assets", StaticFiles(directory=str(static_root)), name="ui-assets")
@@ -88,6 +93,41 @@ def get_budget():
 @app.get("/mcp/tools")
 def list_tools():
     return registry.list_tools()
+
+
+@app.get("/ok/providers")
+def list_ok_providers(capability: str = "", enabled_only: bool = True):
+    providers = ok_provider_registry.list_providers(
+        capability=capability,
+        enabled_only=enabled_only,
+    )
+    return {
+        "count": len(providers),
+        "providers": providers,
+        "budget_groups": ok_provider_registry.budget_groups(),
+    }
+
+
+@app.get("/ok/providers/{provider_id}")
+def get_ok_provider(provider_id: str):
+    provider = ok_provider_registry.get_provider(provider_id)
+    if provider is None:
+        return {"status": "error", "detail": f"unknown provider: {provider_id}"}
+    return provider
+
+
+@app.post("/ok/route")
+def route_ok_request(payload: dict = Body(...)):
+    decision = ok_routing_engine.route(payload)
+    return {
+        "request": payload,
+        "decision": decision,
+    }
+
+
+@app.get("/ok/mcp-policy")
+def get_ok_mcp_policy():
+    return mcp_split_policy()
 
 @app.get("/orchestration/status")
 def orchestration_status():

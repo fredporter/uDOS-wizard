@@ -1,0 +1,21 @@
+{
+  "provider_id": "wizard.openrouter",
+  "provider_class": "ok_provider",
+  "network_required": true,
+  "models": [
+    "openrouter-economy",
+    "openrouter-balanced"
+  ],
+  "capabilities": [
+    "summarization",
+    "classification",
+    "drafting",
+    "code_generation",
+    "reasoning"
+  ],
+  "budget_group": "tier1_economy",
+  "retry_policy": "fallback_provider",
+  "cache_policy": "enabled",
+  "approval_required": false,
+  "enabled": true
+}

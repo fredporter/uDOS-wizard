@@ -39,6 +39,44 @@ class APIContractTests(unittest.TestCase):
         self.assertIn("UDOS_WIZARD_PORT", keys)
         self.assertIn("OPENAI_API_KEY", keys)
 
+    def test_ok_provider_registry_routes_expose_provider_manifests(self) -> None:
+        response = self.client.get("/ok/providers")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertGreaterEqual(payload["count"], 5)
+        provider_ids = {item["provider_id"] for item in payload["providers"]}
+        self.assertIn("wizard.openai", provider_ids)
+        self.assertIn("wizard.anthropic", provider_ids)
+
+        detail = self.client.get("/ok/providers/wizard.openai")
+        self.assertEqual(detail.status_code, 200)
+        detail_payload = detail.json()
+        self.assertEqual(detail_payload["provider_id"], "wizard.openai")
+
+    def test_ok_route_returns_budget_aware_decision(self) -> None:
+        response = self.client.post(
+            "/ok/route",
+            json={
+                "task": "summarize this changelog",
+                "task_class": "summarize",
+                "allowed_budget_groups": ["tier0_free", "tier1_economy"],
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertIn("decision", payload)
+        self.assertEqual(payload["decision"]["status"], "routed")
+        self.assertIn("provider_id", payload["decision"])
+
+    def test_ok_mcp_policy_route_exposes_core_wizard_dev_split(self) -> None:
+        response = self.client.get("/ok/mcp-policy")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "ok")
+        self.assertIn("core", payload["ownership"])
+        self.assertIn("wizard", payload["ownership"])
+        self.assertIn("dev", payload["ownership"])
+
     def test_grid_contract_route_exposes_grid_owned_contract(self) -> None:
         response = self.client.get("/grid/contracts/grid-place")
         self.assertEqual(response.status_code, 200)
