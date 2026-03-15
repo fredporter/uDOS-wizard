@@ -21,7 +21,20 @@ This is now a mixed launch path: the older zero-build GUI still exists at
 ## Prerequisites
 
 - Python 3.11 or newer is preferred by the project metadata
-- `fastapi` and `uvicorn` installed in the active environment
+- project dependencies installed in the active environment
+
+## Repo Install
+
+From the repo root:
+
+```bash
+python3 -m pip install --upgrade pip
+python3 -m pip install -e .
+```
+
+If you plan to use the paired demo launcher, keep `uHOME-server` checked out
+next to `uDOS-wizard` at `../uHOME-server`. If that sibling repo is not
+present, use `--no-uhome` or start Wizard manually.
 
 If you are using the repo directly, run checks first:
 
@@ -36,6 +49,9 @@ Fastest local demo path:
 ```bash
 udos-wizard-demo
 ```
+
+By default this launches the sibling `uHOME-server` repo and the Wizard
+service together.
 
 Equivalent module launch:
 

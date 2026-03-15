@@ -38,6 +38,9 @@ Network-facing assist, provider, MCP, and bounded autonomy services for uDOS v2.
 
 Treat external providers as adapters behind stable public contracts.
 Use `scripts/run-wizard-checks.sh` as the default local validation entrypoint.
+Use `docs/getting-started.md` for the install and validation path, and use
+`docs/first-launch-quickstart.md` for the paired Wizard and `uHOME-server`
+operator flow.
 
 Fastest demo launch:
 
@@ -68,6 +71,8 @@ Wizard now uses the shared `v2` dev config and local-state contract:
 
 ## Activation References
 
+- `docs/getting-started.md`
+- `docs/first-launch-quickstart.md`
 - `docs/activation.md`
 - `docs/v2.0.1-orchestration-foundation.md`
 - `examples/basic-wizard-session.md`
