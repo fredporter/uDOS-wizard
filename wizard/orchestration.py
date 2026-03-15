@@ -2,6 +2,20 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys
+
+
+def _ensure_core_on_path() -> None:
+    core_root = Path(__file__).resolve().parents[2] / "uDOS-core"
+    core_root_str = str(core_root)
+    if core_root.exists() and core_root_str not in sys.path:
+        sys.path.insert(0, core_root_str)
+
+
+_ensure_core_on_path()
+
+from udos_core.dev_config import get_path
+from udos_core.local_state import ensure_install_id
 
 
 def _runtime_service_source() -> Path:
@@ -22,9 +36,8 @@ def _load_orchestration_contract() -> dict:
 
 class OrchestrationRegistry:
     def __init__(self, result_store_path: Path | None = None) -> None:
-        self._result_store_path = result_store_path or (
-            Path(__file__).resolve().parents[1] / "memory" / "orchestration-results.json"
-        )
+        self._result_store_path = result_store_path or get_path("WIZARD_RESULT_STORE_PATH")
+        ensure_install_id()
         self._results = self._load_results()
 
     def _load_results(self) -> dict[str, dict]:

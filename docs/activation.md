@@ -20,6 +20,9 @@ assist and transport layer without expanding its ownership beyond:
 - `wizard/budget.py` as the budgeting-policy lane
 - `wizard/mcp_registry.py` as the MCP tool registry lane
 - `wizard/beacon.py` as the Beacon helper lane
+- `wizard/secret_store.py` as the local encrypted secret lane
+- `wizard/runtime_config.py` as the config and secret resolution lane
+- `wizard/grid_runtime.py` as the Grid consumption and place-validation lane
 - `scripts/run-wizard-checks.sh` as the local validation entrypoint
 - `examples/basic-wizard-session.md` as the smallest operator walkthrough
 

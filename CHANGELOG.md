@@ -14,3 +14,4 @@ All notable changes to `uDOS-wizard` should be documented in this file.
 - added callback and result routes for end-to-end Round B dispatch reporting
 - packaged Wizard orchestration routes and response shapes for non-sibling consumption
 - persisted Wizard dispatch results to a file-backed local store for `v2.0.2` release completion
+- added `uDOS-grid` consumption routes for Grid contract inspection, seed inspection, and starter place validation

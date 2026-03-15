@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uDOS Thin GUI</title>
+    <link rel="stylesheet" href="/ui-assets/wizard-gui.css" />
+  </head>
+  <body data-ui-mode="thin">
+    <div class="thin-shell">
+      <header class="thin-header">
+        <div>
+          <p class="eyebrow">Thin GUI</p>
+          <h1 id="thin-title">Shared Preview Surface</h1>
+        </div>
+        <a class="action-link" href="/gui">Open Full Wizard GUI</a>
+      </header>
+
+      <main class="thin-main">
+        <aside class="thin-meta card">
+          <h2>Session</h2>
+          <dl>
+            <dt>Route</dt>
+            <dd id="thin-route">render-preview</dd>
+            <dt>Target</dt>
+            <dd id="thin-target">gui-preview</dd>
+            <dt>Theme</dt>
+            <dd id="thin-theme">public-sunset</dd>
+            <dt>Preset</dt>
+            <dd id="thin-prose">prose-default</dd>
+          </dl>
+        </aside>
+
+        <section class="thin-preview-wrap card">
+          <div id="thin-preview" class="preview-surface thin-preview"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/ui-assets/wizard-gui.js"></script>
+  </body>
+</html>

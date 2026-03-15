@@ -3,7 +3,8 @@ name = "udos-wizard"
 version = "0.2.0"
 description = "uDOS wizard service and AI/network kernel starter"
 requires-python = ">=3.11"
-dependencies = ["fastapi", "uvicorn"]
+dependencies = ["cryptography", "fastapi", "uvicorn"]
 
 [project.scripts]
 udos-wizard = "wizard.main:run"
+udos-wizard-demo = "wizard.demo:main"
