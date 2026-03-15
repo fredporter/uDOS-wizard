@@ -1,6 +1,6 @@
 # uDOS v2 Wizard OK Provider Routing Engine
 
-Status: v2 initial implementation
+Status: v2 recommended architecture and initial implementation
 Scope: Wizard control plane routing
 Owner: uDOS-wizard
 

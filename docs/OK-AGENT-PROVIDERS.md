@@ -1,6 +1,6 @@
 # uDOS v2 Wizard OK Agent Provider Targets
 
-Status: v2 initial implementation
+Status: v2 recommended provider list and initial implementation
 Scope: Wizard provider routing layer
 Owner: uDOS-wizard
 

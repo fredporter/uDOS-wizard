@@ -1,6 +1,6 @@
 # uDOS v2 OK Agent MCP Architecture
 
-Status: v2 initial architecture implementation
+Status: v2 recommended architecture and initial implementation
 Scope: MCP split across Core, Wizard, and Dev
 Primary owner: uDOS-wizard
 
