@@ -77,6 +77,66 @@ class APIContractTests(unittest.TestCase):
         self.assertIn("wizard", payload["ownership"])
         self.assertIn("dev", payload["ownership"])
 
+    def test_uhome_network_policy_contract_and_schema_routes_expose_expected_keys(self) -> None:
+        contract = self.client.get("/contracts/uhome/network-policy")
+        self.assertEqual(contract.status_code, 200)
+        contract_payload = contract.json()
+        self.assertEqual(contract_payload["owner"], "uDOS-wizard")
+        self.assertEqual(contract_payload["version"], "v2.0.4")
+        self.assertIn("beacon", contract_payload["profiles"])
+        self.assertEqual(
+            contract_payload["routes"]["validate"]["path"],
+            "/contracts/uhome/network-policy/validate",
+        )
+
+        schema = self.client.get("/contracts/uhome/network-policy/schema")
+        self.assertEqual(schema.status_code, 200)
+        schema_payload = schema.json()
+        self.assertEqual(schema_payload["title"], "WizardToUHomeNetworkPolicy")
+        self.assertIn("profile_id", schema_payload["properties"])
+
+    def test_uhome_network_policy_validate_route_accepts_valid_payload_and_rejects_invalid_payload(self) -> None:
+        valid = self.client.post(
+            "/contracts/uhome/network-policy/validate",
+            json={
+                "contract_version": "v2.0.4",
+                "profile_id": "beacon",
+                "network_scope": "public",
+                "visibility": "visible",
+                "auth_mode": "open",
+                "vault_access": "local-only",
+                "internet_sharing": "disabled",
+                "runtime_owner": "uHOME-server",
+                "policy_owner": "uDOS-wizard",
+                "consumer_repos": ["uHOME-server", "uHOME-empire"],
+                "secret_refs": ["secret://wizard/network/beacon"],
+            },
+        )
+        self.assertEqual(valid.status_code, 200)
+        valid_payload = valid.json()
+        self.assertTrue(valid_payload["ok"])
+        self.assertEqual(valid_payload["profile_id"], "beacon")
+
+        invalid = self.client.post(
+            "/contracts/uhome/network-policy/validate",
+            json={
+                "contract_version": "v2.0.4",
+                "profile_id": "tomb",
+                "network_scope": "private",
+                "visibility": "visible",
+                "auth_mode": "password-protected",
+                "vault_access": "local-only",
+                "internet_sharing": "disabled",
+                "runtime_owner": "uHOME-server",
+                "policy_owner": "uDOS-wizard",
+                "consumer_repos": ["uHOME-server"],
+                "secret_refs": [],
+            },
+        )
+        self.assertEqual(invalid.status_code, 400)
+        invalid_payload = invalid.json()
+        self.assertEqual(invalid_payload["error"], "uhome-network-policy-validation-failed")
+
     def test_grid_contract_route_exposes_grid_owned_contract(self) -> None:
         response = self.client.get("/grid/contracts/grid-place")
         self.assertEqual(response.status_code, 200)

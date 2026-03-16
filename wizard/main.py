@@ -3,7 +3,8 @@ from html import escape
 import sys
 
 from fastapi import Body, FastAPI
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from pydantic import ValidationError
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
@@ -40,6 +41,12 @@ from .secret_store import get_secret_store
 from .ok.provider_registry import ProviderRegistry
 from .ok.routing_engine import OKProviderRoutingEngine
 from .ok.mcp_policy import mcp_split_policy
+from .uhome_policy_contract import (
+    get_uhome_network_policy_contract,
+    get_uhome_network_policy_schema,
+    uhome_network_policy_validation_error,
+    validate_uhome_network_policy,
+)
 from .uhome_bridge import (
     automation_jobs as fetch_uhome_automation_jobs,
     automation_results as fetch_uhome_automation_results,
@@ -154,6 +161,32 @@ def orchestration_callback(payload: dict = Body(...)):
 @app.get("/orchestration/result/{dispatch_id}")
 def orchestration_result(dispatch_id: str):
     return orchestration.get_result(dispatch_id)
+
+
+@app.get("/contracts/uhome/network-policy")
+def get_uhome_network_policy_contract_route():
+    return get_uhome_network_policy_contract()
+
+
+@app.get("/contracts/uhome/network-policy/schema")
+def get_uhome_network_policy_schema_route():
+    return get_uhome_network_policy_schema()
+
+
+@app.post("/contracts/uhome/network-policy/validate")
+def post_uhome_network_policy_validate(payload: dict = Body(...)):
+    try:
+        validated = validate_uhome_network_policy(payload)
+    except (ValueError, ValidationError) as exc:
+        return JSONResponse(content=uhome_network_policy_validation_error(exc), status_code=400)
+    return {
+        "ok": True,
+        "contract_version": validated["contract_version"],
+        "profile_id": validated["profile_id"],
+        "runtime_owner": validated["runtime_owner"],
+        "policy_owner": validated["policy_owner"],
+        "validated_policy": validated,
+    }
 
 
 @app.get("/workflow/state")
