@@ -1,6 +1,6 @@
 # Wizard UI
 
-This is the first Svelte/Tailwind frontend scaffold for the Wizard GUI rebuild.
+This is the active Svelte/Tailwind frontend for the Wizard operator GUI.
 
 Current scope:
 
@@ -10,7 +10,7 @@ Current scope:
 - preset and theme selection
 - export-backed output browsing
 - route-based SPA sections for launch, workflow, automation, render, Thin GUI, presets, exports, and config
-- launch links back to the current zero-build GUI and Thin GUI
+- compatibility links to the older zero-build GUI and Thin GUI while those routes remain published
 
 ## Dev
 

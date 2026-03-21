@@ -50,7 +50,7 @@
       "---",
       "# Shared render preview",
       "",
-      "This Svelte workbench is the first migration step off the zero-build GUI.",
+      "This Svelte workbench is the active Wizard operator surface.",
       "",
       "- Live preview",
       "- Shared presets",

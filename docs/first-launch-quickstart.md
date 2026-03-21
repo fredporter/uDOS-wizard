@@ -10,13 +10,13 @@ Current first-launch surfaces:
 - service health and orchestration routes
 - workflow and automation handoff routes
 - shared render contract and preset routes
-- legacy browser GUI workbench at `/gui`
+- compatibility browser GUI workbench at `/gui`
 - Thin GUI view at `/thin`
 - Svelte operator app at `/app`
 - saved render exports under `/rendered/...`
 
-This is now a mixed launch path: the older zero-build GUI still exists at
-`/gui`, but `/app` is the primary v2 operator surface.
+`/app` is the primary Wizard operator surface. `/gui` and `/thin` remain
+published as compatibility lanes only.
 
 ## Prerequisites
 

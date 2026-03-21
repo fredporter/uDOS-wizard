@@ -5,8 +5,8 @@
 This note assesses three surfaces:
 
 - current `uDOS-wizard`
-- archived browser GUI work in `uDOS-v1-8-archived`
-- Thin GUI lineage across archived `modules/thin-gui` and current `uDOS-shell/src/thingui`
+- archived browser GUI work mirrored under `uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived`
+- Thin GUI lineage across the mirrored `modules/thin-gui` archive and current `uDOS-shell/src/thingui`
 
 The goal is to define a practical path to:
 
@@ -16,7 +16,7 @@ The goal is to define a practical path to:
 
 ## Current State Summary
 
-### 1. `uDOS-wizard` now ships the first recovered operator GUI baseline
+### 1. `uDOS-wizard` now ships the active recovered operator GUI
 
 Current active Wizard is a FastAPI service plus a browser operator surface with
 shared render, workflow, automation, and config panels:
@@ -59,11 +59,10 @@ Observed state:
 
 Conclusion:
 
-- `uDOS-wizard` is no longer backend-only; the first browser operator product
-  lane is live and locally runnable
-- the remaining gap is recovery depth and operator richness versus the archived
-  Wizard/admin lineages, especially for richer state visibility and assistant
-  handling inside the recovered GUI
+- `uDOS-wizard` is no longer backend-only; the browser operator product lane is
+  live and locally runnable
+- the mirrored v1 material is now reference-only and can be used without
+  keeping the root archive repo in place
 
 ### 2. Archived Wizard has two separate UI lineages
 
@@ -71,14 +70,14 @@ Conclusion:
 
 Archived browser pages live under:
 
-- [`wizard/web/templates/base.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/base.html)
-- [`wizard/web/templates/dashboard.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/dashboard.html)
-- [`wizard/web/templates/devices.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/devices.html)
-- [`wizard/web/templates/config.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/config.html)
-- [`wizard/web/templates/catalog.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/catalog.html)
-- [`wizard/web/templates/logs.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/logs.html)
-- [`wizard/web/templates/webhooks.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/webhooks.html)
-- [`wizard/web/templates/hotkeys.html`](/Users/fredbook/Code/uDOS-v1-8-archived/wizard/web/templates/hotkeys.html)
+- [base.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/base.html)
+- [dashboard.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/dashboard.html)
+- [devices.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/devices.html)
+- [config.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/config.html)
+- [catalog.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/catalog.html)
+- [logs.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/logs.html)
+- [webhooks.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/webhooks.html)
+- [hotkeys.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/wizard/web/templates/hotkeys.html)
 
 Characteristics:
 
@@ -106,21 +105,21 @@ Weaknesses:
 
 Archived Svelte app lives under:
 
-- [`apps/admin/README.md`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/README.md)
-- [`apps/admin/src/routes/+layout.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/routes/+layout.svelte)
-- [`apps/admin/src/routes/+page.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/routes/+page.svelte)
+- [apps/admin/README.md](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/README.md)
+- [+layout.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/routes/+layout.svelte)
+- [+page.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/routes/+page.svelte)
 
 Supporting components and services:
 
-- [`apps/admin/src/lib/components/ThemePicker.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/components/ThemePicker.svelte)
-- [`apps/admin/src/lib/components/MissionQueue.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/components/MissionQueue.svelte)
-- [`apps/admin/src/lib/components/ContributionQueue.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/components/ContributionQueue.svelte)
-- [`apps/admin/src/lib/components/RendererPreview.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/components/RendererPreview.svelte)
-- [`apps/admin/src/lib/components/SpatialPanel.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/components/SpatialPanel.svelte)
-- [`apps/admin/src/lib/components/TaskPanel.svelte`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/components/TaskPanel.svelte)
-- [`apps/admin/src/lib/services/opsService.ts`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/services/opsService.ts)
-- [`apps/admin/src/lib/services/rendererService.ts`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/services/rendererService.ts)
-- [`apps/admin/src/lib/services/spatialService.ts`](/Users/fredbook/Code/uDOS-v1-8-archived/apps/admin/src/lib/services/spatialService.ts)
+- [ThemePicker.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/components/ThemePicker.svelte)
+- [MissionQueue.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/components/MissionQueue.svelte)
+- [ContributionQueue.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/components/ContributionQueue.svelte)
+- [RendererPreview.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/components/RendererPreview.svelte)
+- [SpatialPanel.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/components/SpatialPanel.svelte)
+- [TaskPanel.svelte](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/components/TaskPanel.svelte)
+- [opsService.ts](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/services/opsService.ts)
+- [rendererService.ts](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/services/rendererService.ts)
+- [spatialService.ts](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/apps/admin/src/lib/services/spatialService.ts)
 
 Characteristics:
 
@@ -150,10 +149,10 @@ Weaknesses:
 
 Archived Thin GUI:
 
-- [`modules/thin-gui/README.md`](/Users/fredbook/Code/uDOS-v1-8-archived/modules/thin-gui/README.md)
-- [`modules/thin-gui/assets/index.html`](/Users/fredbook/Code/uDOS-v1-8-archived/modules/thin-gui/assets/index.html)
-- [`modules/thin-gui/assets/thin-gui.js`](/Users/fredbook/Code/uDOS-v1-8-archived/modules/thin-gui/assets/thin-gui.js)
-- [`modules/thin-gui/assets/thin-gui.css`](/Users/fredbook/Code/uDOS-v1-8-archived/modules/thin-gui/assets/thin-gui.css)
+- [modules/thin-gui/README.md](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/modules/thin-gui/README.md)
+- [modules/thin-gui/assets/index.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/modules/thin-gui/assets/index.html)
+- [modules/thin-gui/assets/thin-gui.js](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/modules/thin-gui/assets/thin-gui.js)
+- [modules/thin-gui/assets/thin-gui.css](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/modules/thin-gui/assets/thin-gui.css)
 
 Current shell-side placeholder:
 
@@ -527,8 +526,8 @@ If development starts now, the shortest sensible sequence is:
 
 Reuse directly with light cleanup:
 
-- Thin GUI single-window/intent logic from [`modules/thin-gui/assets/thin-gui.js`](/Users/fredbook/Code/uDOS-v1-8-archived/modules/thin-gui/assets/thin-gui.js)
-- Thin GUI shell layout ideas from [`modules/thin-gui/assets/index.html`](/Users/fredbook/Code/uDOS-v1-8-archived/modules/thin-gui/assets/index.html)
+- Thin GUI single-window/intent logic from [modules/thin-gui/assets/thin-gui.js](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/modules/thin-gui/assets/thin-gui.js)
+- Thin GUI shell layout ideas from [modules/thin-gui/assets/index.html](/Users/fredbook/Code/uDOS-family/uDOS-dev/@dev/archive-imports/v1/uDOS-v1-8-archived/modules/thin-gui/assets/index.html)
 - service-client patterns from archived admin service files
 - route naming and panel composition from archived Wizard templates
 
