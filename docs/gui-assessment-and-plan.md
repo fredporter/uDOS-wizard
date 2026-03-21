@@ -16,23 +16,40 @@ The goal is to define a practical path to:
 
 ## Current State Summary
 
-### 1. `uDOS-wizard` today is backend-only
+### 1. `uDOS-wizard` now ships the first recovered operator GUI baseline
 
-Current active Wizard is a small FastAPI service with a narrow ownership boundary:
+Current active Wizard is a FastAPI service plus a browser operator surface with
+shared render, workflow, automation, and config panels:
 
 - [`README.md`](/Users/fredbook/Code/uDOS-wizard/README.md)
 - [`docs/activation.md`](/Users/fredbook/Code/uDOS-wizard/docs/activation.md)
+- [`docs/first-launch-quickstart.md`](/Users/fredbook/Code/uDOS-wizard/docs/first-launch-quickstart.md)
 - [`wizard/main.py`](/Users/fredbook/Code/uDOS-wizard/wizard/main.py)
+- [`apps/wizard-ui/src/App.svelte`](/Users/fredbook/Code/uDOS-wizard/apps/wizard-ui/src/App.svelte)
 
 Observed state:
 
-- no Svelte, Tailwind, or frontend package exists in the current repo
-- no `/admin`, `/api/ops/*`, `/api/renderer/*`, or websocket UI routes exist
-- current HTTP surface is limited to:
+- a Vite + Svelte operator app now exists in-repo under `apps/wizard-ui`
+- Wizard serves route-based browser surfaces at:
+  - `/app/workflow`
+  - `/app/automation`
+  - `/app/publishing`
+  - `/app/thin-gui`
+  - `/app/config`
+- zero-build browser surfaces still exist at:
+  - `/gui`
+  - `/thin`
+- the HTTP surface includes the original orchestration kernel plus render,
+  workflow, automation, config, and OK-provider routes
+- archived `/admin` and `/api/ops/*` contracts still are not restored as-is,
+  and websocket-heavy live operator patterns are not yet the current model
+- current HTTP surface includes:
   - `/`
   - `/assist`
   - `/budget`
   - `/mcp/tools`
+  - `/ok/providers`
+  - `/ok/route`
   - `/orchestration/status`
   - `/orchestration/dispatch`
   - `/orchestration/workflow-plan`
@@ -42,8 +59,11 @@ Observed state:
 
 Conclusion:
 
-- `uDOS-wizard` is an orchestration kernel, not yet a usable operator GUI product
-- any GUI recovery work is effectively a new frontend + API tranche, not a small polish task
+- `uDOS-wizard` is no longer backend-only; the first browser operator product
+  lane is live and locally runnable
+- the remaining gap is recovery depth and operator richness versus the archived
+  Wizard/admin lineages, especially for richer state visibility and assistant
+  handling inside the recovered GUI
 
 ### 2. Archived Wizard has two separate UI lineages
 
