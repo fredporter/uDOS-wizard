@@ -16,6 +16,14 @@ It keeps routing and policy inside `uDOS-wizard`.
 - `uDOS Wizard MCP: Initialize`
 - `uDOS Wizard MCP: List Tools`
 - `uDOS Wizard MCP: Call Tool`
+- `uDOS Wizard MCP: Route Active Selection`
+
+`Route Active Selection` calls `ok.route` with:
+
+- selected text when present, otherwise the active file content
+- workspace name as `project_id`
+- active relative file path as `source_file`
+- document language as `source_language`
 
 ## Local Use
 

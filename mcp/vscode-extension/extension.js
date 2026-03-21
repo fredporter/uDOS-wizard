@@ -19,6 +19,11 @@ function activate(context) {
       await runCallTool(output);
     }),
   );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("udosWizardMcp.routeSelection", async () => {
+      await runRouteSelection(output);
+    }),
+  );
 }
 
 function deactivate() {}
@@ -121,15 +126,79 @@ async function runCallTool(output) {
   vscode.window.showInformationMessage(`Wizard MCP tool completed: ${pick.label}`);
 }
 
+async function runRouteSelection(output) {
+  const endpoint = getEndpoint();
+  const context = activeEditorContext();
+  if (!context) {
+    vscode.window.showWarningMessage("Open a file or select text before routing through Wizard MCP.");
+    return;
+  }
+
+  const task = context.selectedText || context.documentText;
+  if (!task.trim()) {
+    vscode.window.showWarningMessage("The active editor has no text to route.");
+    return;
+  }
+
+  const taskClass = await vscode.window.showQuickPick(
+    [
+      { label: "summarize", detail: "Summarize the current selection or file." },
+      { label: "analysis", detail: "Route an analysis-class request." },
+      { label: "draft", detail: "Route a draft or writing request." },
+    ],
+    { title: "Wizard MCP task class" },
+  );
+  if (!taskClass) {
+    return;
+  }
+
+  const response = await rpc(endpoint, "tools/call", {
+    name: "ok.route",
+    arguments: {
+      task: trimForMCP(task),
+      task_class: taskClass.label,
+      allowed_budget_groups: ["tier0_free", "tier1_economy"],
+      project_id: context.workspaceName,
+      source_file: context.relativePath,
+      source_language: context.languageId,
+      selection_active: context.hasSelection,
+    },
+  });
+
+  output.appendLine(`[tools/call] ok.route from ${context.relativePath}`);
+  output.appendLine(JSON.stringify(response, null, 2));
+  output.show(true);
+
+  const provider = response.result?.provider_id || "n/a";
+  const status = response.result?.status || "completed";
+  vscode.window.showInformationMessage(`Wizard MCP routed ${taskClass.label}: ${status} via ${provider}`);
+}
+
 function defaultArgumentsFor(toolName) {
   if (toolName === "ok.route") {
-    return {
-      task: "summarize this changelog",
-      task_class: "summarize",
-      allowed_budget_groups: ["tier0_free", "tier1_economy"],
-    };
+    const context = activeEditorContext();
+    return defaultRouteArguments(context);
   }
   return {};
+}
+
+function defaultRouteArguments(context) {
+  const payload = {
+    task: "summarize this changelog",
+    task_class: "summarize",
+    allowed_budget_groups: ["tier0_free", "tier1_economy"],
+  };
+
+  if (!context) {
+    return payload;
+  }
+
+  payload.task = trimForMCP(context.selectedText || context.documentText || payload.task);
+  payload.project_id = context.workspaceName;
+  payload.source_file = context.relativePath;
+  payload.source_language = context.languageId;
+  payload.selection_active = context.hasSelection;
+  return payload;
 }
 
 async function rpc(endpoint, method, params) {
@@ -163,6 +232,37 @@ function getEndpoint() {
   return vscode.workspace
     .getConfiguration()
     .get("udosWizard.mcpEndpoint", "http://127.0.0.1:8100/mcp");
+}
+
+function activeEditorContext() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return null;
+  }
+
+  const document = editor.document;
+  const selection = editor.selection;
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
+  const selectedText = document.getText(selection);
+  const documentText = document.getText();
+
+  return {
+    workspaceName: workspaceFolder?.name || "workspace",
+    relativePath: workspaceFolder ? vscode.workspace.asRelativePath(document.uri) : document.uri.fsPath,
+    languageId: document.languageId || "plaintext",
+    hasSelection: !selection.isEmpty,
+    selectedText,
+    documentText,
+  };
+}
+
+function trimForMCP(text) {
+  const limit = 4000;
+  const trimmed = (text || "").trim();
+  if (trimmed.length <= limit) {
+    return trimmed;
+  }
+  return `${trimmed.slice(0, limit)}\n...[truncated by VS Code MCP client]`;
 }
 
 module.exports = {

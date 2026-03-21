@@ -14,7 +14,8 @@
   "activationEvents": [
     "onCommand:udosWizardMcp.initialize",
     "onCommand:udosWizardMcp.listTools",
-    "onCommand:udosWizardMcp.callTool"
+    "onCommand:udosWizardMcp.callTool",
+    "onCommand:udosWizardMcp.routeSelection"
   ],
   "main": "./extension.js",
   "contributes": {
@@ -30,6 +31,10 @@
       {
         "command": "udosWizardMcp.callTool",
         "title": "uDOS Wizard MCP: Call Tool"
+      },
+      {
+        "command": "udosWizardMcp.routeSelection",
+        "title": "uDOS Wizard MCP: Route Active Selection"
       }
     ],
     "configuration": {
