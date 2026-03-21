@@ -78,6 +78,66 @@ runtime_bind_status = configured_runtime_bind_status()
 ok_provider_registry = ProviderRegistry()
 ok_routing_engine = OKProviderRoutingEngine(ok_provider_registry)
 
+
+def _register_mcp_tools() -> None:
+    registry.register(
+        "ok.route",
+        "Route an OK request through Wizard budget and provider policy.",
+        input_schema={
+            "type": "object",
+            "properties": {
+                "task": {"type": "string"},
+                "task_class": {"type": "string"},
+                "allowed_budget_groups": {"type": "array", "items": {"type": "string"}},
+                "approval_granted": {"type": "boolean"},
+                "offline_sufficient": {"type": "boolean"},
+                "cache_hit": {"type": "boolean"},
+                "complexity": {"type": "string"},
+            },
+            "required": ["task"],
+            "additionalProperties": True,
+        },
+        annotations={
+            "owner": "uDOS-wizard",
+            "surface": "managed-mcp",
+            "route": "/ok/route",
+        },
+        handler=ok_routing_engine.route,
+    )
+    registry.register(
+        "ok.providers.list",
+        "List Wizard OK providers and budget groups.",
+        input_schema={
+            "type": "object",
+            "properties": {
+                "capability": {"type": "string"},
+                "enabled_only": {"type": "boolean"},
+            },
+            "additionalProperties": False,
+        },
+        annotations={
+            "owner": "uDOS-wizard",
+            "surface": "managed-mcp",
+            "route": "/ok/providers",
+        },
+        handler=lambda payload: {
+            "count": len(
+                ok_provider_registry.list_providers(
+                    capability=str(payload.get("capability") or ""),
+                    enabled_only=bool(payload.get("enabled_only", True)),
+                )
+            ),
+            "providers": ok_provider_registry.list_providers(
+                capability=str(payload.get("capability") or ""),
+                enabled_only=bool(payload.get("enabled_only", True)),
+            ),
+            "budget_groups": ok_provider_registry.budget_groups(),
+        },
+    )
+
+
+_register_mcp_tools()
+
 if static_root.exists():
     app.mount("/ui-assets", StaticFiles(directory=str(static_root)), name="ui-assets")
 rendered_root.mkdir(parents=True, exist_ok=True)
@@ -100,6 +160,68 @@ def get_budget():
 @app.get("/mcp/tools")
 def list_tools():
     return registry.list_tools()
+
+
+@app.post("/mcp/tools/{tool_name}/invoke")
+def invoke_tool(tool_name: str, payload: dict = Body(default_factory=dict)):
+    try:
+        invocation = registry.invoke(tool_name, payload)
+    except KeyError as exc:
+        return JSONResponse(status_code=404, content={"status": "error", "detail": str(exc)})
+    except ValueError as exc:
+        return JSONResponse(status_code=400, content={"status": "error", "detail": str(exc)})
+
+    return {
+        "status": "ok",
+        "invocation": invocation,
+    }
+
+
+@app.post("/mcp")
+def mcp_rpc(payload: dict = Body(...)):
+    method = str(payload.get("method") or "")
+    request_id = payload.get("id")
+    params = payload.get("params") or {}
+
+    if method == "initialize":
+        return {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "result": {
+                "serverInfo": {"name": "uDOS Wizard MCP", "version": "v2.2"},
+                "capabilities": {"tools": {"listChanged": False}},
+            },
+        }
+
+    if method == "tools/list":
+        return {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "result": registry.list_tools(),
+        }
+
+    if method == "tools/call":
+        tool_name = str(params.get("name") or "")
+        arguments = params.get("arguments") or {}
+        try:
+            invocation = registry.invoke(tool_name, arguments)
+        except (KeyError, ValueError) as exc:
+            return {
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "error": {"code": -32000, "message": str(exc)},
+            }
+        return {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "result": invocation,
+        }
+
+    return {
+        "jsonrpc": "2.0",
+        "id": request_id,
+        "error": {"code": -32601, "message": f"method not found: {method}"},
+    }
 
 
 @app.get("/ok/providers")

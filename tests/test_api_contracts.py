@@ -77,6 +77,54 @@ class APIContractTests(unittest.TestCase):
         self.assertIn("wizard", payload["ownership"])
         self.assertIn("dev", payload["ownership"])
 
+    def test_mcp_tools_route_lists_live_tools(self) -> None:
+        response = self.client.get("/mcp/tools")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertGreaterEqual(payload["count"], 2)
+        tool_names = {tool["name"] for tool in payload["tools"]}
+        self.assertIn("ok.route", tool_names)
+        self.assertIn("ok.providers.list", tool_names)
+
+    def test_mcp_invoke_route_executes_ok_route_tool(self) -> None:
+        response = self.client.post(
+            "/mcp/tools/ok.route/invoke",
+            json={
+                "task": "summarize this changelog",
+                "task_class": "summarize",
+                "allowed_budget_groups": ["tier0_free", "tier1_economy"],
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["invocation"]["tool"]["name"], "ok.route")
+        self.assertEqual(payload["invocation"]["result"]["status"], "routed")
+
+    def test_mcp_rpc_tools_call_executes_ok_route_tool(self) -> None:
+        response = self.client.post(
+            "/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "id": "req-1",
+                "method": "tools/call",
+                "params": {
+                    "name": "ok.route",
+                    "arguments": {
+                        "task": "summarize this changelog",
+                        "task_class": "summarize",
+                        "allowed_budget_groups": ["tier0_free", "tier1_economy"],
+                    },
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["jsonrpc"], "2.0")
+        self.assertEqual(payload["id"], "req-1")
+        self.assertEqual(payload["result"]["tool"]["name"], "ok.route")
+        self.assertEqual(payload["result"]["result"]["status"], "routed")
+
     def test_uhome_network_policy_contract_and_schema_routes_expose_expected_keys(self) -> None:
         contract = self.client.get("/contracts/uhome/network-policy")
         self.assertEqual(contract.status_code, 200)
