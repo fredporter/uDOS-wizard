@@ -228,6 +228,10 @@ Relevant routes behind that loop:
 - `GET /uhome/automation/status`
 - `GET /uhome/automation/results`
 
+For the active `v2.3` operating model, treat this Wizard loop as bounded
+workflow and automation evidence gathering. Binder progression and release-state
+changes remain governed by `uDOS-dev/docs/workflow-schedule-operations.md`.
+
 The saved HTML and manifest are written under:
 
 ```text
