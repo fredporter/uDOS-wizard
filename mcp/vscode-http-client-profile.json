@@ -1,0 +1,22 @@
+{
+  "name": "uDOS Wizard Local MCP",
+  "version": "v2.2",
+  "transport": "http-jsonrpc",
+  "endpoint": "http://127.0.0.1:8100/mcp",
+  "initialize_method": "initialize",
+  "list_tools_method": "tools/list",
+  "call_tool_method": "tools/call",
+  "notes": [
+    "Use this profile with a local MCP-capable VS Code client or extension.",
+    "Wizard remains the owner of provider routing, budget policy, and managed MCP controls.",
+    "No provider credentials are exposed through the MCP response surface."
+  ],
+  "starter_tool": {
+    "name": "ok.route",
+    "arguments": {
+      "task": "summarize this changelog",
+      "task_class": "summarize",
+      "allowed_budget_groups": ["tier0_free", "tier1_economy"]
+    }
+  }
+}

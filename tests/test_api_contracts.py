@@ -125,6 +125,42 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["result"]["tool"]["name"], "ok.route")
         self.assertEqual(payload["result"]["result"]["status"], "routed")
 
+    def test_mcp_rpc_initialize_reports_server_info_and_tools_capability(self) -> None:
+        response = self.client.post(
+            "/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "id": "req-init",
+                "method": "initialize",
+                "params": {},
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["jsonrpc"], "2.0")
+        self.assertEqual(payload["id"], "req-init")
+        self.assertEqual(payload["result"]["serverInfo"]["name"], "uDOS Wizard MCP")
+        self.assertIn("tools", payload["result"]["capabilities"])
+
+    def test_mcp_rpc_tools_list_reports_live_tools(self) -> None:
+        response = self.client.post(
+            "/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "id": "req-list",
+                "method": "tools/list",
+                "params": {},
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["jsonrpc"], "2.0")
+        self.assertEqual(payload["id"], "req-list")
+        self.assertGreaterEqual(payload["result"]["count"], 2)
+        tool_names = {tool["name"] for tool in payload["result"]["tools"]}
+        self.assertIn("ok.route", tool_names)
+        self.assertIn("ok.providers.list", tool_names)
+
     def test_uhome_network_policy_contract_and_schema_routes_expose_expected_keys(self) -> None:
         contract = self.client.get("/contracts/uhome/network-policy")
         self.assertEqual(contract.status_code, 200)

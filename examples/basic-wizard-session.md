@@ -31,6 +31,7 @@ GET /                     -> service health
 GET /assist?task=demo     -> assist routing preview
 GET /budget               -> budgeting policy snapshot
 GET /mcp/tools            -> MCP registry listing
+POST /mcp                 -> JSON-RPC initialize/tools/list/tools/call
 GET /beacon/announce      -> Beacon availability check
 GET /gui                  -> browser GUI workbench
 GET /thin                 -> Thin GUI shared preview lane
