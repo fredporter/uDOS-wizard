@@ -1,0 +1,46 @@
+{
+  "name": "udos-wizard-mcp-client",
+  "displayName": "uDOS Wizard MCP Client",
+  "description": "VS Code command stub for Wizard-managed MCP over HTTP JSON-RPC.",
+  "version": "0.2.2",
+  "publisher": "fredporter",
+  "private": true,
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:udosWizardMcp.initialize",
+    "onCommand:udosWizardMcp.listTools",
+    "onCommand:udosWizardMcp.callTool"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "udosWizardMcp.initialize",
+        "title": "uDOS Wizard MCP: Initialize"
+      },
+      {
+        "command": "udosWizardMcp.listTools",
+        "title": "uDOS Wizard MCP: List Tools"
+      },
+      {
+        "command": "udosWizardMcp.callTool",
+        "title": "uDOS Wizard MCP: Call Tool"
+      }
+    ],
+    "configuration": {
+      "title": "uDOS Wizard MCP",
+      "properties": {
+        "udosWizard.mcpEndpoint": {
+          "type": "string",
+          "default": "http://127.0.0.1:8100/mcp",
+          "description": "Wizard MCP HTTP JSON-RPC endpoint."
+        }
+      }
+    }
+  }
+}

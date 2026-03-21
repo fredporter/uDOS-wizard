@@ -12,3 +12,4 @@ Activation reference:
 
 - `docs/v2.2-mcp-vscode-activation.md`
 - `mcp/vscode-http-client-profile.json`
+- `mcp/vscode-extension/README.md`
