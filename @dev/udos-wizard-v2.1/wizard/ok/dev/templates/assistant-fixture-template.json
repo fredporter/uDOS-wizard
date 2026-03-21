@@ -1,0 +1,7 @@
+{
+  "assistant": "OK Dev Tutor",
+  "request_class": "draft",
+  "schedule_class": "review_window",
+  "expected_output_class": "tutorial",
+  "policy_expected": "allow"
+}

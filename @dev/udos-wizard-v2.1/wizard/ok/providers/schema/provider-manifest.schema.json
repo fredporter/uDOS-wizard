@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "uDOS Wizard Provider Manifest",
+  "type": "object",
+  "required": [
+    "provider_id",
+    "display_name",
+    "budget_group",
+    "capabilities",
+    "enabled"
+  ],
+  "properties": {
+    "provider_id": {
+      "type": "string"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "budget_group": {
+      "type": "string",
+      "enum": [
+        "offline_only",
+        "tier0_free",
+        "tier1_economy",
+        "tier2_premium",
+        "tierX_locked"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "preferred_for": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

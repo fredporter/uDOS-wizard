@@ -1,0 +1,18 @@
+{
+  "provider_id": "wizard.openai",
+  "display_name": "OpenAI",
+  "budget_group": "tier1_economy",
+  "capabilities": [
+    "analysis",
+    "draft",
+    "code",
+    "multimodal",
+    "transformation"
+  ],
+  "preferred_for": [
+    "OK Builder",
+    "OK Diagrammer"
+  ],
+  "enabled": true,
+  "notes": "General structured output and multimodal assistance."
+}
