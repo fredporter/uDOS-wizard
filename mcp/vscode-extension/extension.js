@@ -32,7 +32,7 @@ async function runInitialize(output) {
   const endpoint = getEndpoint();
   const response = await rpc(endpoint, "initialize", {
     clientInfo: {
-      name: "uDOS Wizard VS Code Stub",
+      name: "uDOS Wizard VS Code Client",
       version: "v2.2",
     },
   });

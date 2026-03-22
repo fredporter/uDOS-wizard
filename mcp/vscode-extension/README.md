@@ -1,6 +1,6 @@
-# uDOS Wizard MCP VS Code Stub
+# uDOS Wizard MCP VS Code Client
 
-Minimal VS Code extension stub for the active Round B Wizard MCP bridge.
+Local VS Code client for the active Wizard-managed MCP bridge.
 
 ## Purpose
 

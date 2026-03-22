@@ -1,7 +1,7 @@
 {
   "name": "udos-wizard-mcp-client",
   "displayName": "uDOS Wizard MCP Client",
-  "description": "VS Code command stub for Wizard-managed MCP over HTTP JSON-RPC.",
+  "description": "VS Code command client for Wizard-managed MCP over HTTP JSON-RPC.",
   "version": "0.2.2",
   "publisher": "fredporter",
   "private": true,

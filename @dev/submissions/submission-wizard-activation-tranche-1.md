@@ -1,0 +1,24 @@
+# Submission: `#binder/wizard-activation` tranche 1
+
+- binder: `#binder/wizard-activation`
+- owning repo: `uDOS-wizard`
+- branch: `develop`
+- summary:
+  - added the first Wizard activation doc
+  - added a repo-level validation entrypoint for Wizard-owned helper surfaces
+  - added a basic service walkthrough and activated the repo entry surfaces
+- validation run:
+  - `uDOS-wizard/scripts/run-wizard-checks.sh`
+- policy checks:
+  - Wizard remains the assist and transport layer
+  - activation does not claim core semantic ownership or shell UI ownership
+- promotable outputs:
+  - `uDOS-wizard/docs/activation.md`
+  - `uDOS-wizard/scripts/run-wizard-checks.sh`
+  - `uDOS-wizard/examples/basic-wizard-session.md`
+  - `uDOS-wizard/tests/`
+- risks:
+  - FastAPI service startup is still documented but not yet covered by an integration test
+- next promotion step:
+  - commit and push `uDOS-wizard` and `uDOS-dev`
+  - advance the roadmap ledger toward the next repo-activation target
