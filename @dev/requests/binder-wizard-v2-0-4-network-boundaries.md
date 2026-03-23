@@ -18,7 +18,7 @@ absorbing its ownership.
 - `uDOS-wizard`
 - `uDOS-shell`
 - `uHOME-server`
-- `uHOME-empire`
+- `uDOS-empire`
 - `uDOS-dev`
 
 ## Acceptance Criteria
@@ -30,7 +30,7 @@ absorbing its ownership.
 - [x] Shell live Wizard OK routing handoff landed (`/ok/route`)
 - [x] Wizard networking boundary note written in `uDOS-wizard/docs/`
 - [x] public Wizard route set for sibling direct calls documented
-- [x] secret-backed bridge lanes for `uHOME-server` and `uHOME-empire` documented
+- [x] secret-backed bridge lanes for `uHOME-server` and `uDOS-empire` documented
 - [x] Wizard OK provider/routing and MCP split docs published (`OK-AGENT-PROVIDERS`, `OK-PROVIDER-ROUTING-ENGINE`, `OK-AGENT-MCP-ARCHITECTURE`)
 - [x] Core v2.0.4 OK contract layer published (`ok-agent-capability`, `mcp-tool`, `deferred-packet`, `budget-policy`)
 - [x] Dev fixture and promotion scaffolds published with runnable fixture checks
@@ -43,7 +43,7 @@ absorbing its ownership.
 - Wizard owns provider routing, network bridge policy, and secret-backed
   credentials
 - Core stays contract-first and does not absorb Wizard networking runtime logic
-- `uHOME-server` and `uHOME-empire` consume Wizard bridge contracts rather than
+- `uHOME-server` and `uDOS-empire` consume Wizard bridge contracts rather than
   creating competing family-wide bridge ownership
 
 ## Current First Handoff

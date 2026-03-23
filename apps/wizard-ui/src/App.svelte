@@ -12,7 +12,10 @@
   import {
     fetchLocalState,
     fetchOrchestrationStatus,
+    fetchMcpTools,
+    fetchOkProviders,
     fetchPortStatus,
+    fetchRenderContract,
     fetchRenderExportDetail,
     fetchRenderExports,
     fetchRenderPresets,
@@ -60,6 +63,9 @@
 
   let portStatus = null;
   let orchestrationStatus = null;
+  let mcpTools = null;
+  let okProviders = null;
+  let renderContract = null;
   let prosePresets = [];
   let themeAdapters = [];
   let skins = [];
@@ -76,8 +82,10 @@
   let preview = null;
   let selectedExportDetail = null;
   let busy = false;
+  let syncing = false;
   let error = "";
   let pollHandle = null;
+  let lastRefreshAt = "";
 
   const targets = ["gui-preview", "web-prose", "email-html", "beacon-library"];
 
@@ -96,6 +104,29 @@
         lens_id: form.lens_id,
       },
     };
+  }
+
+  function markRefreshed() {
+    lastRefreshAt = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
+
+  async function refreshRuntimeStatus() {
+    const [portPayload, orchestrationPayload, mcpToolsPayload, okProvidersPayload, renderContractPayload] = await Promise.all([
+      fetchPortStatus(),
+      fetchOrchestrationStatus(),
+      fetchMcpTools(),
+      fetchOkProviders(),
+      fetchRenderContract(),
+    ]);
+    portStatus = portPayload;
+    orchestrationStatus = orchestrationPayload;
+    mcpTools = mcpToolsPayload;
+    okProviders = okProvidersPayload;
+    renderContract = renderContractPayload;
   }
 
   async function refreshExports() {
@@ -147,6 +178,51 @@
     uhomeAutomationResults = automationResultsPayload.status === "fulfilled"
       ? automationResultsPayload.value
       : { items: [] };
+  }
+
+  async function refreshPublishingState() {
+    const [presetsPayload] = await Promise.all([
+      fetchRenderPresets(),
+      refreshExports(),
+    ]);
+
+    prosePresets = presetsPayload.prose_presets ?? [];
+    themeAdapters = flattenThemeAdapters(presetsPayload.theme_adapters ?? {});
+    skins = presetsPayload.gameplay_skins ?? [];
+
+    if (!form.theme_adapter && themeAdapters[0]) {
+      form.theme_adapter = themeAdapters[0].theme;
+    }
+  }
+
+  async function refreshDashboard({ includePreview = false } = {}) {
+    syncing = true;
+    try {
+      await Promise.all([
+        refreshRuntimeStatus(),
+        refreshConfig(),
+        refreshWorkflowAndAutomation(),
+        refreshPublishingState(),
+      ]);
+      if (includePreview) {
+        preview = await postRenderPreview(requestPayload());
+      }
+      if (!selectedExportDetail && exportsList.length > 0) {
+        await handleSelectExport(exportsList[0]);
+      }
+      markRefreshed();
+    } finally {
+      syncing = false;
+    }
+  }
+
+  async function handleRefresh() {
+    error = "";
+    try {
+      await refreshDashboard();
+    } catch (err) {
+      error = err.message;
+    }
   }
 
   async function handlePreview() {
@@ -310,29 +386,11 @@
     busy = true;
     error = "";
     try {
-      const [portPayload, orchestrationPayload, presetsPayload] = await Promise.all([
-        fetchPortStatus(),
-        fetchOrchestrationStatus(),
-        fetchRenderPresets(),
-      ]);
-
-      portStatus = portPayload;
-      orchestrationStatus = orchestrationPayload;
-      prosePresets = presetsPayload.prose_presets ?? [];
-      themeAdapters = flattenThemeAdapters(presetsPayload.theme_adapters ?? {});
-      skins = presetsPayload.gameplay_skins ?? [];
-
-      if (!form.theme_adapter && themeAdapters[0]) {
-        form.theme_adapter = themeAdapters[0].theme;
-      }
-
-      preview = await postRenderPreview(requestPayload());
-      const nextExports = await refreshExports();
+      await refreshDashboard({ includePreview: true });
+      const nextExports = exportsList;
       if (!selectedExportDetail && nextExports.length > 0) {
         await handleSelectExport(nextExports[0]);
       }
-      await refreshConfig();
-      await refreshWorkflowAndAutomation();
     } catch (err) {
       error = err.message;
     } finally {
@@ -343,9 +401,25 @@
   onMount(() => {
     bootstrap();
     pollHandle = window.setInterval(() => {
-      if ($activeView === "workflow" || $activeView === "automation") {
-        handleReconcileLatest();
-      }
+      refreshRuntimeStatus()
+        .then(() => {
+          if ($activeView === "workflow" || $activeView === "automation") {
+            return refreshWorkflowAndAutomation().then(() => handleReconcileLatest());
+          }
+          if ($activeView === "config") {
+            return refreshConfig();
+          }
+          if ($activeView === "publishing" || $activeView === "thin-gui") {
+            return refreshExports();
+          }
+          return Promise.resolve();
+        })
+        .then(() => {
+          markRefreshed();
+        })
+        .catch((err) => {
+          error = err.message;
+        });
     }, 5000);
     return () => {
       if (pollHandle) {
@@ -364,7 +438,14 @@
         {routeMeta[$activeView]?.description || "Route-based v2 operator surface for workflow, automation, publishing, and Thin GUI parity."}
       </p>
     </div>
-    <div class="flex gap-2">
+    <div class="flex flex-wrap gap-2">
+      <button
+        class="rounded-full border border-[#a48258] bg-white px-4 py-2 text-sm text-ink shadow-panel"
+        on:click={handleRefresh}
+        disabled={busy || syncing}
+      >
+        {syncing ? "Refreshing..." : "Refresh Console"}
+      </button>
       {#if portStatus?.base_url}
         <a class="rounded-full border border-[#a48258] bg-panel px-4 py-2 text-sm text-ink no-underline shadow-panel" href={`${portStatus.base_url}/app`} target="_blank" rel="noreferrer">
           Wizard-served App
@@ -383,7 +464,13 @@
     </div>
   </header>
 
-  <StatusStrip {portStatus} {orchestrationStatus} />
+  <StatusStrip
+    {portStatus}
+    {orchestrationStatus}
+    {uhomeBridgeStatus}
+    activeView={$activeView}
+    {lastRefreshAt}
+  />
 
   {#if error}
     <section class="mt-4 rounded-[18px] border border-red-300 bg-red-50 p-4 text-sm text-red-700">
@@ -396,13 +483,20 @@
 
     <div class="grid gap-5">
       {#if $activeView === "launch"}
-        <LaunchPanel {portStatus} {orchestrationStatus} />
+        <LaunchPanel
+          {portStatus}
+          {orchestrationStatus}
+          {okProviders}
+          {mcpTools}
+          {renderContract}
+        />
       {:else if $activeView === "workflow"}
         <WorkflowPanel
           {workflowState}
           {workflowActions}
           {orchestrationStatus}
           {busy}
+          {lastRefreshAt}
           onSaveMetadata={handleSaveWorkflowMetadata}
           onAdvance={() => handleWorkflowAction("advance")}
           onPause={() => handleWorkflowAction("pause")}
@@ -416,6 +510,7 @@
           {uhomeAutomationResults}
           {orchestrationStatus}
           {busy}
+          {lastRefreshAt}
           onCancelJob={handleCancelJob}
           onDispatchAutomation={handleDispatchAutomation}
           onProcessNext={handleProcessNext}
@@ -433,6 +528,7 @@
           {preview}
           {exportsList}
           {selectedExportDetail}
+          selectedExportSlug={selectedExportDetail?.slug ?? ""}
           publishingSummary={{
             proseCount: prosePresets.length,
             themeCount: themeAdapters.length,
@@ -452,6 +548,7 @@
           {portStatus}
           {secrets}
           {busy}
+          {lastRefreshAt}
           onSaveState={handleSaveState}
           onSaveSecret={handleSaveSecret}
         />

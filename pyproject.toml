@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "udos-wizard"
 version = "0.2.0"
@@ -8,3 +12,6 @@ dependencies = ["cryptography", "fastapi", "uvicorn"]
 [project.scripts]
 udos-wizard = "wizard.main:run"
 udos-wizard-demo = "wizard.demo:main"
+
+[tool.setuptools.packages.find]
+include = ["wizard*"]

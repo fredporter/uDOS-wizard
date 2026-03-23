@@ -2,7 +2,13 @@ const DEFAULT_BASE_URL = "http://127.0.0.1:8787";
 
 export function getApiBaseUrl() {
   const fromEnv = import.meta.env.VITE_WIZARD_API_URL;
-  return (fromEnv || DEFAULT_BASE_URL).replace(/\/$/, "");
+  if (fromEnv) {
+    return fromEnv.replace(/\/$/, "");
+  }
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin.replace(/\/$/, "");
+  }
+  return DEFAULT_BASE_URL;
 }
 
 async function fetchJson(path, options = {}) {
@@ -19,6 +25,14 @@ export function fetchPortStatus() {
 
 export function fetchOrchestrationStatus() {
   return fetchJson("/orchestration/status");
+}
+
+export function fetchMcpTools() {
+  return fetchJson("/mcp/tools");
+}
+
+export function fetchOkProviders() {
+  return fetchJson("/ok/providers");
 }
 
 export function fetchWorkflowState() {
@@ -55,6 +69,10 @@ export function fetchUhomeAutomationResults() {
 
 export function fetchRenderPresets() {
   return fetchJson("/render/presets");
+}
+
+export function fetchRenderContract() {
+  return fetchJson("/render/contract");
 }
 
 export function fetchRenderExports() {

@@ -231,7 +231,7 @@ async function rpc(endpoint, method, params) {
 function getEndpoint() {
   return vscode.workspace
     .getConfiguration()
-    .get("udosWizard.mcpEndpoint", "http://127.0.0.1:8100/mcp");
+    .get("udosWizard.mcpEndpoint", "http://127.0.0.1:8787/mcp");
 }
 
 function activeEditorContext() {

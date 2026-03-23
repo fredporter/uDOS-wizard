@@ -6,7 +6,7 @@
 - summary:
   - published the first Wizard-owned household networking policy contract and schema for `Beacon`, `Crypt`, `Tomb`, and `Home`
   - added direct-call Wizard routes for contract read, schema read, and payload validation
-  - updated Wizard boundary docs so `uHOME-server`, `uHOME-empire`, and `sonic-screwdriver` have an explicit sibling-consumption surface
+  - updated Wizard boundary docs so `uHOME-server`, `uDOS-empire`, and `sonic-screwdriver` have an explicit sibling-consumption surface
   - added API contract coverage for the new routes and payload validation behavior
   - fixed the repo validation script so it prefers the project virtual environment interpreter before falling back to host `python3`
 - validation run:

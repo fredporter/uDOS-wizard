@@ -18,7 +18,7 @@
 - Thin GUI or kiosk runtime ownership
 - always-on automation fulfillment
 - always-on home runtime services
-- Google or HubSpot sync business logic owned by `uHOME-empire`
+- Google or HubSpot sync business logic owned by `uDOS-empire`
 - Apple-native desktop sync owned outside the public family
 
 ## v2 Runtime Rule

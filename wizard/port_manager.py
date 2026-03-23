@@ -2,7 +2,19 @@ from __future__ import annotations
 
 import socket
 import subprocess
+import sys
 from dataclasses import dataclass
+from pathlib import Path
+
+
+def _ensure_core_on_path() -> None:
+    core_root = Path(__file__).resolve().parents[2] / "uDOS-core"
+    core_root_str = str(core_root)
+    if core_root.exists() and core_root_str not in sys.path:
+        sys.path.insert(0, core_root_str)
+
+
+_ensure_core_on_path()
 
 from udos_core.dev_config import get_bool, get_int, get_str
 

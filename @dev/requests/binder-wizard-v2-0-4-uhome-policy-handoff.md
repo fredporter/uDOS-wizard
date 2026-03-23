@@ -10,7 +10,7 @@
 - acceptance criteria:
   - a versioned Wizard-to-uHOME networking policy contract and schema are published in `uDOS-wizard`
   - `Beacon`, `Crypt`, `Tomb`, and `Home` are mapped into server-consumable policy payloads with field-level documentation
-  - sibling-facing docs state which route or artifact `uHOME-server` and `uHOME-empire` may consume directly
+  - sibling-facing docs state which route or artifact `uHOME-server` and `uDOS-empire` may consume directly
   - end-to-end tests validate successful handoff plus rejection behavior for invalid or incomplete policy payloads
 - dependencies:
   - `#binder/wizard-v2-0-4-network-boundaries`
@@ -19,7 +19,7 @@
 - boundary questions:
   - `uDOS-wizard` defines policy, credentials, and network control-plane behavior
   - `uHOME-server` hosts runtime services and applies approved local policy
-  - `uHOME-empire` and `sonic-screwdriver` consume published contract outputs only
+  - `uDOS-empire` and `sonic-screwdriver` consume published contract outputs only
 - due or milestone: `v2.0.4 follow-up`
 
 ## Binder Fields
@@ -28,7 +28,7 @@
 - owner: `uDOS-wizard`
 - dependent repos:
   - `uHOME-server`
-  - `uHOME-empire`
+  - `uDOS-empire`
   - `sonic-screwdriver`
   - `uDOS-dev`
 - blocked by:

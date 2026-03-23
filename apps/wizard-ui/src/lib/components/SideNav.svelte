@@ -1,14 +1,16 @@
 <script>
+  import { buildViewHref } from "../router.js";
+
   export let activeView = "publishing";
   export let onSelect = () => {};
 
   const views = [
-    { id: "launch", label: "Launch" },
-    { id: "workflow", label: "Workflow" },
-    { id: "automation", label: "Automation" },
-    { id: "publishing", label: "Publishing" },
-    { id: "thin-gui", label: "Thin GUI" },
-    { id: "config", label: "Config" },
+    { id: "launch", label: "Launch", note: "entrypoints and live links" },
+    { id: "workflow", label: "Workflow", note: "mission state and control" },
+    { id: "automation", label: "Automation", note: "uHOME jobs and results" },
+    { id: "publishing", label: "Publishing", note: "preview and exports" },
+    { id: "thin-gui", label: "Thin GUI", note: "presentation parity" },
+    { id: "config", label: "Config", note: "binds, state, and secrets" },
   ];
 </script>
 
@@ -17,7 +19,7 @@
   <nav class="mt-3 grid gap-2">
     {#each views as view}
       <a
-        href={view.id === "publishing" ? "/" : `/${view.id}`}
+        href={buildViewHref(view.id)}
         class={`rounded-2xl px-4 py-3 text-left text-sm transition ${
           activeView === view.id
             ? "border border-[#a48258] bg-white text-ink shadow-panel"
@@ -25,7 +27,8 @@
         }`}
         on:click|preventDefault={() => onSelect(view.id)}
       >
-        {view.label}
+        <strong class="block">{view.label}</strong>
+        <span class="mt-1 block text-xs uppercase tracking-[0.1em] opacity-75">{view.note}</span>
       </a>
     {/each}
   </nav>

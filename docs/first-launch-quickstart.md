@@ -25,11 +25,10 @@ published as compatibility lanes only.
 
 ## Repo Install
 
-From the repo root:
+From the repo root, bootstrap the repo-local environment:
 
 ```bash
-python3 -m pip install --upgrade pip
-python3 -m pip install -e .
+bash scripts/run-wizard-checks.sh
 ```
 
 If you plan to use the paired demo launcher, keep `uHOME-server` checked out
@@ -47,7 +46,7 @@ bash scripts/run-wizard-checks.sh
 Fastest local demo path:
 
 ```bash
-udos-wizard-demo
+.venv/bin/udos-wizard-demo
 ```
 
 By default this launches the sibling `uHOME-server` repo and the Wizard
@@ -56,7 +55,7 @@ service together.
 Equivalent module launch:
 
 ```bash
-python3 -m wizard.demo
+.venv/bin/python -m wizard.demo
 ```
 
 That launches:
@@ -80,7 +79,7 @@ http://127.0.0.1:8787/demo/links
 To launch Wizard without `uHOME-server`:
 
 ```bash
-udos-wizard-demo --no-uhome
+.venv/bin/udos-wizard-demo --no-uhome
 ```
 
 ## Start The Service Manually
@@ -88,19 +87,19 @@ udos-wizard-demo --no-uhome
 From the repo root:
 
 ```bash
-python3 -m wizard.main
+.venv/bin/python -m wizard.main
 ```
 
 Alternative:
 
 ```bash
-python3 -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
+.venv/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
 ```
 
 If installed as a package:
 
 ```bash
-udos-wizard
+.venv/bin/udos-wizard
 ```
 
 Default local address:
@@ -123,13 +122,13 @@ next available port and prints the chosen port in the console.
 To force a specific port:
 
 ```bash
-UDOS_WIZARD_PORT=8788 python3 -m wizard.main
+UDOS_WIZARD_PORT=8788 .venv/bin/python -m wizard.main
 ```
 
 To disable auto-shift on the default port:
 
 ```bash
-UDOS_WIZARD_PORT_AUTO_SHIFT=0 python3 -m wizard.main
+UDOS_WIZARD_PORT_AUTO_SHIFT=0 .venv/bin/python -m wizard.main
 ```
 
 ## Optional Pairing: uHOME-server
@@ -145,7 +144,7 @@ http://127.0.0.1:8000
 If you need to override the paired runtime URL for Wizard:
 
 ```bash
-UHOME_SERVER_URL=http://127.0.0.1:8001 python3 -m wizard.main
+UHOME_SERVER_URL=http://127.0.0.1:8001 .venv/bin/python -m wizard.main
 ```
 
 ## First Browser Checks

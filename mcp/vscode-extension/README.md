@@ -30,7 +30,8 @@ It keeps routing and policy inside `uDOS-wizard`.
 1. Launch Wizard locally from the repo root:
 
 ```bash
-python3 -m wizard.main
+bash scripts/run-wizard-checks.sh
+.venv/bin/python -m wizard.main
 ```
 
 2. Open this folder in VS Code as an extension workspace:
@@ -49,4 +50,4 @@ Setting:
 
 Default:
 
-- `http://127.0.0.1:8100/mcp`
+- `http://127.0.0.1:8787/mcp`

@@ -27,6 +27,11 @@
     });
     return `${baseUrl}/thin?${params.toString()}`;
   }
+
+  function appUrl(view) {
+    const baseUrl = portStatus?.base_url || getApiBaseUrl();
+    return `${baseUrl}/app/${view}`;
+  }
 </script>
 
 <section class="grid gap-5 xl:grid-cols-[minmax(320px,0.82fr)_minmax(380px,1.18fr)]">
@@ -55,6 +60,15 @@
         <p class="text-[11px] uppercase tracking-[0.12em] text-muted">Entry URL</p>
         <p class="mt-2 break-all text-sm text-ink">{thinUrl()}</p>
       </article>
+      <article class="rounded-2xl border border-line/60 bg-white/70 p-4 sm:col-span-2">
+        <p class="text-[11px] uppercase tracking-[0.12em] text-muted">Shared lane contract</p>
+        <p class="mt-2 text-sm text-ink">
+          Thin GUI is a presentation shell over the same Wizard render payload, not a separate product lane.
+        </p>
+        <p class="mt-2 text-sm text-muted">
+          Compare this surface against Publishing for content output and Config for runtime bind truth.
+        </p>
+      </article>
     </div>
 
     <div class="mt-5 flex flex-wrap gap-2">
@@ -72,6 +86,22 @@
         rel="noreferrer"
       >
         Open Thin GUI
+      </a>
+      <a
+        class="rounded-full border border-[#a48258] bg-[#f6efe4] px-4 py-2 text-sm text-ink no-underline shadow-panel"
+        href={appUrl("publishing")}
+        target="_blank"
+        rel="noreferrer"
+      >
+        Open Publishing Lane
+      </a>
+      <a
+        class="rounded-full border border-[#a48258] bg-[#f6efe4] px-4 py-2 text-sm text-ink no-underline shadow-panel"
+        href={appUrl("config")}
+        target="_blank"
+        rel="noreferrer"
+      >
+        Open Config Lane
       </a>
     </div>
   </article>

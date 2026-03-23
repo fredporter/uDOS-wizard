@@ -42,7 +42,7 @@
       "properties": {
         "udosWizard.mcpEndpoint": {
           "type": "string",
-          "default": "http://127.0.0.1:8100/mcp",
+          "default": "http://127.0.0.1:8787/mcp",
           "description": "Wizard MCP HTTP JSON-RPC endpoint."
         }
       }

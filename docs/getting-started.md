@@ -3,14 +3,16 @@
 ## Fastest Path
 
 1. Read `docs/boundary.md` and `docs/v2.0.4-network-boundary-lock.md` before changing any route, provider, or bridge behavior.
-2. Install the repo into the active Python environment.
+2. Bootstrap the repo-local Python environment.
 
 ```bash
-python3 -m pip install --upgrade pip
-python3 -m pip install -e .
+bash scripts/run-wizard-checks.sh
 ```
 
-1. Run the repo validation entrypoint.
+This creates or reuses `.venv`, installs Wizard there, and runs the current
+test suite.
+
+1. Run the repo validation entrypoint again after edits.
 
 ```bash
 bash scripts/run-wizard-checks.sh
@@ -19,13 +21,13 @@ bash scripts/run-wizard-checks.sh
 1. Launch the guided demo stack.
 
 ```bash
-udos-wizard-demo
+.venv/bin/udos-wizard-demo
 ```
 
 Or launch the same flow directly with:
 
 ```bash
-python3 -m wizard.demo
+.venv/bin/python -m wizard.demo
 ```
 
 1. Use `docs/first-launch-quickstart.md` for the full browser route list, manual launch path, and paired `uHOME-server` automation loop.

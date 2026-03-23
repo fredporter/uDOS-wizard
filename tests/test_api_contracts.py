@@ -192,7 +192,7 @@ class APIContractTests(unittest.TestCase):
                 "internet_sharing": "disabled",
                 "runtime_owner": "uHOME-server",
                 "policy_owner": "uDOS-wizard",
-                "consumer_repos": ["uHOME-server", "uHOME-empire"],
+                "consumer_repos": ["uHOME-server", "uDOS-empire"],
                 "secret_refs": ["secret://wizard/network/beacon"],
             },
         )

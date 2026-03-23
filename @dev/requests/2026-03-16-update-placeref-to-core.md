@@ -15,4 +15,4 @@ Contact uDOS-core maintainers with questions or for migration support.
 
 ---
 
-This request is issued to all sibling repo maintainers: uDOS-grid, uDOS-shell, uDOS-wizard, uHOME-server, uHOME-empire, uDOS-gameplay.
+This request is issued to all sibling repo maintainers: uDOS-grid, uDOS-shell, uDOS-wizard, uHOME-server, uDOS-empire, uDOS-gameplay.

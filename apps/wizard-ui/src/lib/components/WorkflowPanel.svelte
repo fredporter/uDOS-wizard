@@ -3,6 +3,7 @@
   export let workflowActions = null;
   export let orchestrationStatus = null;
   export let busy = false;
+  export let lastRefreshAt = "";
   export let onSaveMetadata = () => {};
   export let onAdvance = () => {};
   export let onPause = () => {};
@@ -14,14 +15,36 @@
     mission_notes: "",
     priority: "",
   };
+  let lastSyncedSignature = "";
+
+  function workflowSignature(state) {
+    return JSON.stringify({
+      workflow_id: state?.workflow_id ?? "",
+      mission_title: state?.mission_title ?? "",
+      mission_notes: state?.mission_notes ?? "",
+      priority: state?.priority ?? "",
+    });
+  }
 
   $: if (workflowState) {
-    metadataDraft = {
-      workflow_id: workflowState.workflow_id ?? "",
-      mission_title: workflowState.mission_title ?? "",
-      mission_notes: workflowState.mission_notes ?? "",
-      priority: workflowState.priority ?? "",
-    };
+    const nextSignature = workflowSignature(workflowState);
+    if (nextSignature !== lastSyncedSignature) {
+      metadataDraft = {
+        workflow_id: workflowState.workflow_id ?? "",
+        mission_title: workflowState.mission_title ?? "",
+        mission_notes: workflowState.mission_notes ?? "",
+        priority: workflowState.priority ?? "",
+      };
+      lastSyncedSignature = nextSignature;
+    }
+  }
+
+  function policyFlagsSummary(item) {
+    const flags = item?.policy_flags ?? {};
+    const pairs = Object.entries(flags)
+      .filter(([, value]) => value !== null && value !== undefined && value !== "")
+      .slice(0, 3);
+    return pairs.map(([key, value]) => `${key}: ${value}`).join(" / ");
   }
 </script>
 
@@ -60,6 +83,16 @@
       <article class="rounded-2xl border border-line/60 bg-white/70 p-4">
         <strong class="block text-base text-ink">Awaiting User</strong>
         <p class="mt-2 text-sm text-muted">{workflowState?.awaiting_user_action ? "yes" : "no"}</p>
+      </article>
+      <article class="rounded-2xl border border-line/60 bg-white/70 p-4 md:col-span-2">
+        <strong class="block text-base text-ink">Last Transition</strong>
+        <p class="mt-2 text-sm text-muted">
+          {workflowState?.last_transition_at ?? "-"} / {workflowState?.origin_surface ?? "-"}
+        </p>
+      </article>
+      <article class="rounded-2xl border border-line/60 bg-white/70 p-4 md:col-span-2">
+        <strong class="block text-base text-ink">Console Sync</strong>
+        <p class="mt-2 text-sm text-muted">{lastRefreshAt || "Waiting for first sync"}</p>
       </article>
     </div>
   </article>
@@ -102,9 +135,16 @@
       {:else}
         {#each workflowActions.items.slice().reverse().slice(0, 5) as item}
           <article class="rounded-2xl border border-line/60 bg-white/70 p-4">
-            <strong class="text-base text-ink">{item.action}</strong>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <strong class="text-base text-ink">{item.action}</strong>
+              <span class="rounded-full bg-[#f3d8c8] px-3 py-1 text-[10px] uppercase tracking-[0.12em] text-accent">
+                {item.requested_at ?? "-"}
+              </span>
+            </div>
             <p class="mt-1 text-sm text-muted">{item.requested_by} / {item.origin_surface}</p>
-            <p class="mt-2 text-sm text-ink">{item.requested_at}</p>
+            {#if policyFlagsSummary(item)}
+              <p class="mt-2 text-sm text-ink">{policyFlagsSummary(item)}</p>
+            {/if}
           </article>
         {/each}
       {/if}

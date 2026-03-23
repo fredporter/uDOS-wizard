@@ -7,4 +7,4 @@ Useful examples include:
 - budget enforcement scenarios
 - Beacon control-plane handoff
 - first-launch browser GUI and render export walkthrough
-- lane demo launch via `udos-wizard-demo` and `/demo`
+- lane demo launch via `.venv/bin/udos-wizard-demo` and `/demo`

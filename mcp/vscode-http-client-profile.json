@@ -2,7 +2,7 @@
   "name": "uDOS Wizard Local MCP",
   "version": "v2.2",
   "transport": "http-jsonrpc",
-  "endpoint": "http://127.0.0.1:8100/mcp",
+  "endpoint": "http://127.0.0.1:8787/mcp",
   "initialize_method": "initialize",
   "list_tools_method": "tools/list",
   "call_tool_method": "tools/call",

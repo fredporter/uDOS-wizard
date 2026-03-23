@@ -33,7 +33,7 @@ See `uDOS-docs/architecture/14_v2_language_runtime_spec.md` for the full languag
 - `uDOS-core` owns the uCode verb contract and script document contract — Wizard consumes these for story rendering.
 - `uHOME-server` consumes Wizard networking contracts for local-network pairing,
   Beacon access, and LAN-adjacent workflows.
-- `uHOME-empire` consumes Wizard networking and provider bridge contracts when
+- `uDOS-empire` consumes Wizard networking and provider bridge contracts when
   syncing beyond the local network to remote services such as Google or
   HubSpot.
 

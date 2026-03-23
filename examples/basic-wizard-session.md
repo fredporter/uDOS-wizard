@@ -6,7 +6,8 @@ new browser GUI workbench.
 ## Start The Service
 
 ```bash
-python3 -m wizard.main
+bash scripts/run-wizard-checks.sh
+.venv/bin/python -m wizard.main
 ```
 
 If port `8787` is occupied, Wizard now auto-shifts to the next free port unless
@@ -15,13 +16,13 @@ If port `8787` is occupied, Wizard now auto-shifts to the next free port unless
 Or, after installation:
 
 ```bash
-udos-wizard
+.venv/bin/udos-wizard
 ```
 
 Alternative explicit server launch:
 
 ```bash
-python3 -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
+.venv/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
 ```
 
 ## Example Routes

@@ -5,6 +5,7 @@
   export let uhomeAutomationResults = null;
   export let orchestrationStatus = null;
   export let busy = false;
+  export let lastRefreshAt = "";
   export let onCancelJob = () => {};
   export let onDispatchAutomation = () => {};
   export let onProcessNext = () => {};
@@ -60,6 +61,16 @@
         <p class="mt-2 text-sm text-muted">{uhomeAutomationStatus?.recorded_results ?? "-"}</p>
       </article>
     </div>
+    {#if uhomeAutomationStatus?.jobs_path || uhomeAutomationStatus?.results_path}
+      <div class="mt-4 rounded-2xl border border-line/60 bg-white/70 p-4">
+        <p class="text-[11px] uppercase tracking-[0.12em] text-muted">Automation Store</p>
+        <p class="mt-2 break-all text-sm text-ink">jobs: {uhomeAutomationStatus?.jobs_path ?? "-"}</p>
+        <p class="mt-1 break-all text-sm text-ink">results: {uhomeAutomationStatus?.results_path ?? "-"}</p>
+        <p class="mt-3 text-xs uppercase tracking-[0.12em] text-muted">
+          store updated: {uhomeAutomationResults?.updated_at ?? "unknown"} / console sync: {lastRefreshAt || "pending"}
+        </p>
+      </div>
+    {/if}
   </article>
 
   <article class="rounded-[18px] border border-line/70 bg-panel/90 p-5 shadow-panel backdrop-blur">
@@ -105,6 +116,13 @@
             </p>
             {#if item.workflow_id}
               <p class="mt-2 text-sm text-ink">workflow: {item.workflow_id}</p>
+            {/if}
+            <p class="mt-2 text-sm text-ink">completed: {item.completed_at ?? "-"}</p>
+            {#if item.output_refs?.length}
+              <p class="mt-2 break-all text-sm text-muted">output: {item.output_refs[0]}</p>
+            {/if}
+            {#if item.event_refs?.length}
+              <p class="mt-1 break-all text-sm text-muted">event: {item.event_refs[0]}</p>
             {/if}
           </article>
         {/each}

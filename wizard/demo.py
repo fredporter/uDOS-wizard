@@ -8,6 +8,8 @@ import sys
 import time
 from pathlib import Path
 
+from .port_manager import build_base_url, resolve_bind_plan
+
 
 DEFAULT_WIZARD_HOST = "127.0.0.1"
 DEFAULT_WIZARD_PORT = 8787
@@ -25,6 +27,13 @@ def wizard_repo_root() -> Path:
 
 def uhome_repo_root() -> Path:
     return workspace_root() / "uHOME-server"
+
+
+def configured_uhome_base_url(default_host: str, default_port: int) -> str:
+    override = str(os.environ.get("UHOME_SERVER_URL") or "").strip().rstrip("/")
+    if override:
+        return override
+    return f"http://{default_host}:{default_port}"
 
 
 def build_demo_links(wizard_base_url: str, uhome_base_url: str) -> dict[str, str]:
@@ -73,24 +82,37 @@ def _spawn_wizard(host: str, port: int, uhome_url: str) -> subprocess.Popen[str]
 
 
 def main(argv: list[str] | None = None) -> int:
+    cli_args = list(argv) if argv is not None else sys.argv[1:]
     parser = argparse.ArgumentParser(prog="udos-wizard-demo", description="Run the local Wizard + uHOME demo stack.")
     parser.add_argument("--wizard-host", default=DEFAULT_WIZARD_HOST)
     parser.add_argument("--wizard-port", type=int, default=DEFAULT_WIZARD_PORT)
     parser.add_argument("--uhome-host", default=DEFAULT_UHOME_HOST)
     parser.add_argument("--uhome-port", type=int, default=DEFAULT_UHOME_PORT)
     parser.add_argument("--no-uhome", action="store_true", help="Launch Wizard only.")
-    args = parser.parse_args(argv)
+    args = parser.parse_args(cli_args)
 
-    wizard_base_url = f"http://{args.wizard_host}:{args.wizard_port}"
-    uhome_base_url = f"http://{args.uhome_host}:{args.uhome_port}"
+    port_was_explicit = any(
+        arg == "--wizard-port" or arg.startswith("--wizard-port=") for arg in cli_args
+    )
+    if port_was_explicit:
+        bind_plan = resolve_bind_plan(host=args.wizard_host, port=args.wizard_port)
+    else:
+        bind_plan = resolve_bind_plan(host=args.wizard_host)
+    wizard_base_url = build_base_url(bind_plan.host, bind_plan.port)
+    uhome_base_url = configured_uhome_base_url(args.uhome_host, args.uhome_port)
 
     processes: list[subprocess.Popen[str]] = []
     try:
         if not args.no_uhome:
             processes.append(_spawn_uhome(args.uhome_host, args.uhome_port))
             time.sleep(1.0)
-        processes.append(_spawn_wizard(args.wizard_host, args.wizard_port, uhome_base_url))
+        processes.append(_spawn_wizard(bind_plan.host, bind_plan.port, uhome_base_url))
         time.sleep(1.0)
+        if bind_plan.auto_shifted:
+            print(
+                f"uDOS demo stack: port {bind_plan.requested_port} unavailable; "
+                f"using {bind_plan.port} for Wizard."
+            )
         _print_demo_links(wizard_base_url, uhome_base_url)
 
         while True:

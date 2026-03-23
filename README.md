@@ -45,7 +45,7 @@ operator flow.
 Fastest demo launch:
 
 ```bash
-udos-wizard-demo
+.venv/bin/udos-wizard-demo
 ```
 
 Browser demo index:
@@ -81,7 +81,7 @@ Wizard now uses the shared `v2` dev config and local-state contract:
 ## Family Relation
 
 Wizard enriches and transports work but should converge on Core semantics. It
-supports `uHOME-server` local-network pairing surfaces and `uHOME-empire`
+supports `uHOME-server` local-network pairing surfaces and `uDOS-empire`
 online networking or provider-facing integrations without owning their runtime
 behavior.
 

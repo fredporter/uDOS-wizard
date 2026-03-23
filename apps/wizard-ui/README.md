@@ -7,6 +7,7 @@ Current scope:
 - render workbench against live Wizard APIs
 - workflow and automation status views backed by Wizard and `uHOME-server`
 - Thin GUI parity view inside the Svelte app
+- live Launch lane for runtime binds, OK providers, MCP tools, and render contract visibility
 - preset and theme selection
 - export-backed output browsing
 - route-based SPA sections for launch, workflow, automation, render, Thin GUI, presets, exports, and config
@@ -32,7 +33,8 @@ VITE_WIZARD_API_URL=http://127.0.0.1:8788 npm run dev
 From the Wizard repo:
 
 ```bash
-udos-wizard-demo
+bash scripts/run-wizard-checks.sh
+.venv/bin/udos-wizard-demo
 ```
 
 Then open the local demo index:
@@ -40,6 +42,9 @@ Then open the local demo index:
 ```text
 http://127.0.0.1:8787/demo
 ```
+
+If `8787` is occupied, the demo launcher auto-shifts to the next free port and
+prints the chosen URL in the console.
 
 ## Build And Serve Through Wizard
 

@@ -2,6 +2,7 @@
   import { getApiBaseUrl } from "../api.js";
 
   export let exportsList = [];
+  export let selectedExportSlug = "";
   export let onSelect = () => {};
 
   function exportUrl(item) {
@@ -26,11 +27,16 @@
   {:else}
     <div class="grid gap-3">
       {#each exportsList as item}
-        <article class="rounded-2xl border border-line/60 bg-white/70 p-4">
+        <article class={`rounded-2xl border p-4 ${
+          selectedExportSlug === item.slug
+            ? "border-[#a48258] bg-[#fff8ef] shadow-panel"
+            : "border-line/60 bg-white/70"
+        }`}>
           <strong class="block text-base text-ink">{item.title}</strong>
           <p class="mt-1 text-sm text-muted">
             {item.target} / {item.theme_adapter} / {item.prose_preset}
           </p>
+          <p class="mt-2 text-xs uppercase tracking-[0.12em] text-muted">{item.slug}</p>
           <div class="mt-3 flex flex-wrap gap-3">
             <button class="inline-flex text-sm text-accent" on:click={() => onSelect(item)}>
               View manifest

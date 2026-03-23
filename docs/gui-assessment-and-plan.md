@@ -684,7 +684,7 @@ Likely v2 owner:
 - split ownership across:
   - `uDOS-themes` for presentation packs/tokens
   - `uDOS-docs` for canonical public documentation outputs
-  - optional `uHOME-empire` or other publishing extensions for publishing workflows
+  - optional `uDOS-empire` or other publishing extensions for publishing workflows
   - `uDOS-core` where compile semantics are involved
 
 Why:
@@ -729,11 +729,11 @@ Archived signals:
 
 Likely v2 owner:
 
-- `uHOME-empire`
+- `uDOS-empire`
 
 Why:
 
-- repo family map identifies `uHOME-empire` as the extension surface for always-on sync, CRM, and publishing workflows
+- repo family map identifies `uDOS-empire` as the extension surface for always-on sync, CRM, and publishing workflows
 
 GUI recommendation:
 

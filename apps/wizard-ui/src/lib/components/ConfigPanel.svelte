@@ -6,12 +6,14 @@
   export let onSaveState = () => {};
   export let onSaveSecret = () => {};
   export let busy = false;
+  export let lastRefreshAt = "";
 
   let stateDraft = {
     user: { name: "", role: "" },
     preferences: { viewport: "" },
   };
   let secretDraft = { key: "", value: "" };
+  let uhomeEntry = null;
 
   $: if (localState) {
     stateDraft = {
@@ -24,6 +26,8 @@
       },
     };
   }
+
+  $: uhomeEntry = runtimeConfig?.entries?.find((entry) => entry.key === "UHOME_SERVER_URL") ?? null;
 </script>
 
 <section class="grid gap-5">
@@ -57,6 +61,17 @@
             none
           {/if}
         </p>
+      </article>
+      <article class="rounded-2xl border border-line/60 bg-white/70 p-4 md:col-span-2 xl:col-span-4">
+        <p class="text-[11px] uppercase tracking-[0.12em] text-muted">Paired uHOME Runtime</p>
+        <p class="mt-2 break-all text-sm text-ink">{uhomeEntry?.value ?? "-"}</p>
+        <p class="mt-1 text-xs uppercase tracking-[0.12em] text-muted">
+          source: {uhomeEntry?.source ?? "unknown"} / present: {uhomeEntry?.present ? "yes" : "no"}
+        </p>
+      </article>
+      <article class="rounded-2xl border border-line/60 bg-white/70 p-4 md:col-span-2 xl:col-span-4">
+        <p class="text-[11px] uppercase tracking-[0.12em] text-muted">Runtime Snapshot</p>
+        <p class="mt-2 text-sm text-ink">{runtimeConfig?.count ?? 0} tracked keys / last sync {lastRefreshAt || "pending"}</p>
       </article>
     </div>
 
@@ -136,7 +151,10 @@
     </div>
     <div class="mt-4 grid gap-3 md:grid-cols-2">
       {#if (secrets?.keys?.length ?? 0) === 0}
-        <p class="text-sm text-muted">No secrets stored yet.</p>
+        <article class="rounded-2xl border border-dashed border-line/60 bg-white/60 p-4">
+          <p class="text-sm text-muted">No secrets stored yet.</p>
+          <p class="mt-2 text-sm text-ink">Start with provider keys such as `OPENAI_API_KEY` only when the lane actually needs them.</p>
+        </article>
       {:else}
         {#each secrets.keys as item}
           <article class="rounded-2xl border border-line/60 bg-white/70 px-4 py-3">

@@ -14,6 +14,7 @@
   export let exportsList = [];
   export let publishingSummary = null;
   export let selectedExportDetail = null;
+  export let selectedExportSlug = "";
   export let onPreview = () => {};
   export let onExport = () => {};
   export let onSelectExport = () => {};
@@ -55,7 +56,7 @@
 
     <div class="grid gap-5">
       <PreviewPanel {preview} />
-      <ExportPanel {exportsList} onSelect={onSelectExport} />
+      <ExportPanel {exportsList} {selectedExportSlug} onSelect={onSelectExport} />
     </div>
   </section>
 

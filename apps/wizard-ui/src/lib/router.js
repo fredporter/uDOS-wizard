@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 
 export const views = ["launch", "workflow", "automation", "publishing", "thin-gui", "config"];
+export const APP_BASE_PATH = "/app";
 export const routeMeta = {
   launch: {
     title: "Launch Surface",
@@ -29,7 +30,7 @@ export const routeMeta = {
 };
 
 function normalize(pathname) {
-  const cleaned = pathname.replace(/^\/+|\/+$/g, "");
+  const cleaned = pathname.replace(/^\/+|\/+$/g, "").replace(/^app\/?/, "");
   if (cleaned === "orchestration") {
     return "workflow";
   }
@@ -47,7 +48,7 @@ function initialView() {
     return "publishing";
   }
   const pathView = normalize(window.location.pathname);
-  if (window.location.pathname !== "/") {
+  if (window.location.pathname !== "/" && window.location.pathname !== APP_BASE_PATH) {
     return pathView;
   }
   const hashView = window.location.hash.replace(/^#/, "");
@@ -56,11 +57,16 @@ function initialView() {
 
 export const activeView = writable(initialView());
 
+export function buildViewHref(view) {
+  const next = views.includes(view) ? view : "publishing";
+  return next === "publishing" ? APP_BASE_PATH : `${APP_BASE_PATH}/${next}`;
+}
+
 export function navigate(view) {
   const next = views.includes(view) ? view : "publishing";
   activeView.set(next);
   if (typeof window !== "undefined") {
-    const nextPath = next === "publishing" ? "/" : `/${next}`;
+    const nextPath = buildViewHref(next);
     window.history.pushState({}, "", nextPath);
   }
 }

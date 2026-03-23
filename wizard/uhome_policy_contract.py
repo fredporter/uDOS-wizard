@@ -44,7 +44,7 @@ class UHomeNetworkPolicyPayload(BaseModel):
     internet_sharing: Literal["disabled"]
     runtime_owner: Literal["uHOME-server"]
     policy_owner: Literal["uDOS-wizard"]
-    consumer_repos: list[Literal["uHOME-server", "uHOME-empire", "sonic-screwdriver"]] = Field(min_length=1)
+    consumer_repos: list[Literal["uHOME-server", "uDOS-empire", "sonic-screwdriver"]] = Field(min_length=1)
     secret_refs: list[str] = Field(default_factory=list)
     notes: str | None = None
 

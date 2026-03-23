@@ -1,6 +1,9 @@
 <script>
   export let portStatus = null;
   export let orchestrationStatus = null;
+  export let okProviders = null;
+  export let mcpTools = null;
+  export let renderContract = null;
 </script>
 
 <section class="rounded-[18px] border border-line/70 bg-panel/90 p-5 shadow-panel backdrop-blur">
@@ -64,6 +67,46 @@
           </li>
         {/each}
       </ul>
+    </article>
+  </div>
+
+  <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <article class="rounded-2xl border border-line/60 bg-white/70 p-4">
+      <h3 class="font-display text-2xl text-ink">OK providers</h3>
+      <p class="mt-3 text-sm text-muted">
+        {okProviders?.count ?? 0} providers / {(okProviders?.budget_groups?.length ?? 0)} budget groups
+      </p>
+      <ul class="mt-3 grid gap-2 text-sm text-ink">
+        {#each okProviders?.providers?.slice(0, 4) ?? [] as provider}
+          <li class="rounded-xl border border-line/40 bg-white/70 px-3 py-2">
+            <strong>{provider.provider_id}</strong> / {provider.budget_group}
+          </li>
+        {/each}
+      </ul>
+    </article>
+
+    <article class="rounded-2xl border border-line/60 bg-white/70 p-4">
+      <h3 class="font-display text-2xl text-ink">MCP tools</h3>
+      <p class="mt-3 text-sm text-muted">{mcpTools?.count ?? 0} managed tools exposed through Wizard</p>
+      <ul class="mt-3 grid gap-2 text-sm text-ink">
+        {#each mcpTools?.tools ?? [] as tool}
+          <li class="rounded-xl border border-line/40 bg-white/70 px-3 py-2">
+            <strong>{tool.name}</strong>
+            <p class="mt-1 text-sm text-muted">{tool.annotations?.route ?? "-"}</p>
+          </li>
+        {/each}
+      </ul>
+    </article>
+
+    <article class="rounded-2xl border border-line/60 bg-white/70 p-4">
+      <h3 class="font-display text-2xl text-ink">Render contract</h3>
+      <p class="mt-3 text-sm text-muted">
+        {renderContract?.contract_version ?? "-"} / {renderContract?.owner ?? "-"}
+      </p>
+      <p class="mt-3 text-sm text-ink">
+        targets: {(renderContract?.supported_targets ?? []).join(", ") || "-"}
+      </p>
+      <p class="mt-2 break-all text-sm text-muted">{renderContract?.source ?? "-"}</p>
     </article>
   </div>
 </section>
