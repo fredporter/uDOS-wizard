@@ -99,7 +99,7 @@
     <p class="text-[11px] uppercase tracking-[0.18em] text-accent">Config</p>
     <h2 class="mt-2 font-display text-3xl text-ink">Local state</h2>
     <p class="mt-2 text-sm text-muted">
-      Persist simple operator identity and local UI preferences without leaving the Wizard runtime surface.
+      Persist simple operator identity and local UI preferences without leaving the Surface host.
     </p>
     <div class="mt-4 grid gap-3 md:grid-cols-3">
       <label class="grid gap-2 text-sm text-muted">

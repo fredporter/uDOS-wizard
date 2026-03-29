@@ -11,7 +11,7 @@
   <p class="text-[11px] uppercase tracking-[0.18em] text-accent">Launch</p>
   <h2 class="mt-2 font-display text-3xl text-ink">Runtime entrypoints</h2>
   <p class="mt-2 max-w-[60ch] text-sm text-muted">
-    Use this section to confirm the live Wizard bind, the active product lanes, and the current
+    Use this section to confirm the live Surface bind, the active product lanes, and the current
     shared runtime foundation before moving into workflow, automation, render, or Thin GUI work.
   </p>
 
@@ -102,7 +102,7 @@
 
     <article class="rounded-2xl border border-line/60 bg-white/70 p-4">
       <h3 class="font-display text-2xl text-ink">MCP tools</h3>
-      <p class="mt-3 text-sm text-muted">{mcpTools?.count ?? 0} managed tools exposed through Wizard</p>
+      <p class="mt-3 text-sm text-muted">{mcpTools?.count ?? 0} managed tools exposed through the local broker</p>
       <ul class="mt-3 grid gap-2 text-sm text-ink">
         {#each mcpTools?.tools ?? [] as tool}
           <li class="rounded-xl border border-line/40 bg-white/70 px-3 py-2">

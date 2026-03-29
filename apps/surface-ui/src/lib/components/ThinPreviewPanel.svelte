@@ -63,7 +63,7 @@
       <article class="rounded-2xl border border-line/60 bg-white/70 p-4 sm:col-span-2">
         <p class="text-[11px] uppercase tracking-[0.12em] text-muted">Shared lane contract</p>
         <p class="mt-2 text-sm text-ink">
-          Thin GUI is a presentation shell over the same Wizard render payload, not a separate product lane.
+          Thin GUI is a presentation shell over the same Surface render payload, not a separate product lane.
         </p>
         <p class="mt-2 text-sm text-muted">
           Compare this surface against Publishing for content output and Config for runtime bind truth.
