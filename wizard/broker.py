@@ -115,6 +115,10 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
     family_root = _family_root()
     host_surface_path = family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "wizard-host-surface.v1.json"
     minimum_ops_path = family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "minimum-operations.v1.json"
+    explicit_surface_paths = (
+        family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "okd-surface.v1.json",
+        family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "library-surface.v1.json",
+    )
     records: list[ServiceRecord] = []
 
     if host_surface_path.exists():
@@ -137,6 +141,26 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
                 )
             )
 
+    explicit_surfaces: set[str] = set()
+    for path in explicit_surface_paths:
+        if not path.exists():
+            continue
+        payload = _read_json(path)
+        explicit_surfaces.add(str(payload.get("surface") or ""))
+        records.append(
+            ServiceRecord(
+                service_id=str(payload.get("service_id") or "uDOS-ubuntu"),
+                owner=str(payload.get("owner") or "uDOS-ubuntu"),
+                surface=str(payload.get("surface") or "unknown"),
+                capabilities=tuple(str(capability) for capability in payload.get("capabilities", [])),
+                transport=str(payload.get("transport") or "local-http"),
+                offline_safe=bool(payload.get("offline_safe", False)),
+                dispatch_mode=str(payload.get("dispatch_mode") or "direct"),
+                source=str(path),
+                notes=str(payload.get("purpose") or ""),
+            )
+        )
+
     minimum_operations = []
     if minimum_ops_path.exists():
         minimum_operations = _read_json(minimum_ops_path).get("minimum_operations", [])
@@ -147,6 +171,8 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
         if not operation_id:
             continue
         if operation_id.startswith("vault."):
+            if "library" in explicit_surfaces:
+                continue
             key = "library"
             capability = (
                 "library.search"
@@ -183,16 +209,6 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
             },
         )
         entry["capabilities"].add(capability)
-
-    grouped.setdefault(
-        "okd",
-        {
-            "capabilities": {"ok.transformation", "ok.research", "ok.ingest"},
-            "transport": "local-http",
-            "offline_safe": False,
-            "notes": "Temporary overlay until Ubuntu OKD publishes a first-class contract.",
-        },
-    )
 
     for surface, entry in grouped.items():
         records.append(
