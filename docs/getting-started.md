@@ -4,7 +4,7 @@ This repo is the transitional home of the `uDOS-surface` browser layer.
 
 ## Fastest Path
 
-1. Read `docs/architecture.md` and `docs/surface-transition.md`.
+1. Read `docs/README.md` and `docs/architecture.md`.
 2. Bootstrap and validate the repo:
 
 ```bash

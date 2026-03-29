@@ -11,6 +11,6 @@ Active Round B surfaces:
 Current references:
 
 - `docs/architecture.md`
-- `docs/surface-transition.md`
+- `docs/README.md`
 - `mcp/vscode-http-client-profile.json`
 - `mcp/vscode-extension/README.md`

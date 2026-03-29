@@ -85,12 +85,16 @@ Ubuntu-hosted runtime command centre.
 
 ## Active References
 
+- `docs/README.md`
 - `docs/getting-started.md`
 - `docs/first-launch-quickstart.md`
 - `docs/architecture.md`
-- `docs/surface-transition.md`
 - `docs/wizard-broker.md`
 - `examples/basic-wizard-session.md`
+- `wiki/README.md`
+- `wiki/unit-01-surface-basics.md`
+- `@dev/roadmap.md`
+- `@dev/devlog.md`
 - `scripts/run-surface-checks.sh`
 
 ## Family Relation

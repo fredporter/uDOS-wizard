@@ -1,15 +1,22 @@
-# `uDOS-wizard` Dev Workspace
+# Surface Dev Workspace
 
-Historical repo-local dev material has been aggressively pruned.
+`/ @dev` is the repo-local working lane for this family module.
 
-Active architectural decisions should live in:
+Use it for:
 
-- `README.md`
-- `docs/architecture.md`
-- `docs/getting-started.md`
-- `docs/first-launch-quickstart.md`
-- `docs/surface-transition.md`
-- `uDOS-ubuntu/@dev/udos-ubuntu-v2/`
+- active roadmap items
+- devlog entries
+- short-lived implementation todos
+- repo-specific work tracking
 
-Family-wide planning, cross-repo routing, and release coordination stay in
-`uDOS-dev/@dev`.
+Do not keep historical architecture notes, superseded specs, or drifting
+summaries here. Compost them once their decisions are reflected in `/docs` or
+the code.
+
+## Active Files
+
+- `roadmap.md`
+- `devlog.md`
+- `todos.md`
+
+Cross-repo planning and release coordination still belong in `uDOS-dev/@dev`.
