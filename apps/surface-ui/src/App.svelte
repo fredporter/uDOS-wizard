@@ -436,7 +436,7 @@
 <main class="mx-auto min-h-screen w-[min(1440px,calc(100vw-32px))] py-6">
   <header class="mb-5 flex flex-wrap items-start justify-between gap-4">
     <div>
-      <p class="text-[11px] uppercase tracking-[0.22em] text-accent">uDOS Wizard</p>
+      <p class="text-[11px] uppercase tracking-[0.22em] text-accent">uDOS Surface</p>
       <h1 class="mt-2 font-display text-5xl text-ink">{routeMeta[$activeView]?.title || "Svelte Operator Console"}</h1>
       <p class="mt-3 max-w-[64ch] text-base text-muted">
         {routeMeta[$activeView]?.description || "Route-based v2 operator surface for workflow, automation, publishing, and Thin GUI parity."}
@@ -452,7 +452,7 @@
       </button>
       {#if portStatus?.base_url}
         <a class="rounded-full border border-[#a48258] bg-panel px-4 py-2 text-sm text-ink no-underline shadow-panel" href={`${portStatus.base_url}/app`} target="_blank" rel="noreferrer">
-          Wizard-served App
+          Surface App
         </a>
       {/if}
       {#if portStatus?.gui_url}

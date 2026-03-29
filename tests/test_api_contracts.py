@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 import os
+import json
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -76,6 +77,46 @@ class APIContractTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual(payload["status"], "help")
         self.assertEqual(payload["capability"], "ok.transformation")
+
+    def test_wizard_dispatch_forwards_to_local_http_target(self) -> None:
+        class _FakeResponse:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def read(self):
+                return json.dumps({"status": "accepted", "job_id": "job-1"}).encode("utf-8")
+
+        def _fake_urlopen(req, timeout=0):
+            self.assertEqual(req.full_url, "http://127.0.0.1:8991/ok/format")
+            self.assertEqual(req.get_method(), "POST")
+            body = json.loads(req.data.decode("utf-8"))
+            self.assertEqual(body["input"], "hello")
+            return _FakeResponse()
+
+        with patch("wizard.broker.request.urlopen", side_effect=_fake_urlopen):
+            response = self.client.post(
+                "/wizard/dispatch",
+                json={
+                    "intent": "format this doc",
+                    "payload": {"input": "hello"},
+                },
+            )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "dispatched")
+        self.assertEqual(payload["destination_service"], "uDOS-ubuntu")
+        self.assertEqual(payload["route"]["path"], "/ok/format")
+        self.assertEqual(payload["result"]["status"], "accepted")
+
+    def test_wizard_dispatch_rejects_non_object_payload(self) -> None:
+        response = self.client.post(
+            "/wizard/dispatch",
+            json={"intent": "format this doc", "payload": "bad"},
+        )
+        self.assertEqual(response.status_code, 400)
 
     def test_port_status_route_reports_runtime_bind_snapshot(self) -> None:
         response = self.client.get("/port/status")

@@ -1,8 +1,9 @@
-# uDOS-wizard
+# uDOS Surface
 
-Transition note: this repo is converging on `uDOS-surface` as the browser GUI
-identity. `Wizard` remains a compatibility name here until the mechanical
-rename is scheduled.
+Transition note: this repo still lives at the `uDOS-wizard` path, but the
+browser GUI identity is now `uDOS-surface`. `Wizard` remains here only as the
+broker compatibility role and package/module carryover until the deeper
+mechanical rename is complete.
 
 ## Purpose
 
@@ -76,6 +77,7 @@ Primary v2 lanes:
 - `/app/preview`
 - `/wizard/services`
 - `/wizard/resolve`
+- `/wizard/dispatch`
 
 The old Wizard config-heavy lane should contract out of the core release path.
 Base config, policy, budgeting, sync, and secrets should live in the

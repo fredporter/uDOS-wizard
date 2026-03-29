@@ -5,6 +5,9 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib import error, request
+
+from udos_core.dev_config import get_str
 
 
 def _utc_now_iso_z() -> str:
@@ -25,6 +28,7 @@ class ServiceRecord:
     owner: str
     surface: str
     capabilities: tuple[str, ...]
+    routes: tuple[dict[str, Any], ...]
     transport: str
     offline_safe: bool
     dispatch_mode: str
@@ -59,6 +63,7 @@ def _local_surface_records() -> list[ServiceRecord]:
                 owner=str(payload.get("owner") or "uDOS-wizard"),
                 surface=str(payload.get("surface") or "unknown"),
                 capabilities=tuple(str(capability) for capability in payload.get("capabilities", [])),
+                routes=tuple(payload.get("routes", [])),
                 transport=str(payload.get("transport") or "https"),
                 offline_safe=bool(payload.get("offline_safe", True)),
                 dispatch_mode=str(payload.get("dispatch_mode") or "direct"),
@@ -86,6 +91,7 @@ def _core_contract_records() -> list[ServiceRecord]:
                 owner=str(service.get("owner") or "uDOS-core"),
                 surface="contracts",
                 capabilities=(capability,),
+                routes=tuple(),
                 transport=str(service.get("route") or "local-kernel"),
                 offline_safe=True,
                 dispatch_mode="direct",
@@ -99,6 +105,7 @@ def _core_contract_records() -> list[ServiceRecord]:
             owner="uDOS-core",
             surface="contracts",
             capabilities=("core.validate", "core.schema.lookup"),
+            routes=tuple(),
             transport="local-kernel",
             offline_safe=True,
             dispatch_mode="direct",
@@ -131,6 +138,7 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
                     owner=str(payload.get("owner") or "uDOS-ubuntu"),
                     surface="host",
                     capabilities=host_capabilities,
+                    routes=tuple(payload.get("operations", [])),
                     transport="local-http",
                     offline_safe=True,
                     dispatch_mode="direct",
@@ -151,6 +159,7 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
                 owner=str(payload.get("owner") or "uDOS-ubuntu"),
                 surface=str(payload.get("surface") or "unknown"),
                 capabilities=tuple(str(capability) for capability in payload.get("capabilities", [])),
+                routes=tuple(payload.get("routes", [])),
                 transport=str(payload.get("transport") or "local-http"),
                 offline_safe=bool(payload.get("offline_safe", False)),
                 dispatch_mode=str(payload.get("dispatch_mode") or "direct"),
@@ -215,6 +224,7 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
                 owner="uDOS-ubuntu",
                 surface=surface,
                 capabilities=tuple(sorted(entry["capabilities"])),
+                routes=tuple(),
                 transport=str(entry["transport"]),
                 offline_safe=bool(entry["offline_safe"]),
                 dispatch_mode="direct",
@@ -239,11 +249,58 @@ def list_services() -> list[dict[str, Any]]:
             "transport": service.transport,
             "offline_safe": service.offline_safe,
             "dispatch_mode": service.dispatch_mode,
+            "routes": list(service.routes),
             "source": service.source,
             "notes": service.notes,
         }
         for service in _all_service_records()
     ]
+
+
+def _service_base_url(service_id: str) -> str:
+    if service_id == "uDOS-ubuntu":
+        return get_str("UDOS_UBUNTU_BASE_URL", "http://127.0.0.1:8991").rstrip("/")
+    if service_id in {"uDOS-surface", "uDOS-wizard"}:
+        return get_str("UDOS_SURFACE_BASE_URL", "http://127.0.0.1:8787").rstrip("/")
+    return ""
+
+
+def _select_route(service: ServiceRecord, capability: str, payload: dict[str, Any] | None) -> dict[str, Any] | None:
+    matches = [route for route in service.routes if route.get("capability") == capability]
+    if not matches:
+        return None
+    preferred_method = "POST" if payload else "GET"
+    generic_paths = {"/ok/run", "/wizard/resolve", "/wizard/dispatch"}
+
+    def _route_score(route: dict[str, Any]) -> tuple[int, int, int, int]:
+        method = str(route.get("method") or "").upper()
+        path = str(route.get("path") or route.get("route") or "")
+        method_match = 1 if method == preferred_method else 0
+        path_specificity = len(path.replace("{", "").replace("}", ""))
+        direct_path = 0 if path in generic_paths else 1
+        concrete_path = 0 if "{" in path else 1
+        return (method_match, direct_path, concrete_path, path_specificity)
+
+    return max(matches, key=_route_score)
+
+
+def _dispatch_http_json(service: ServiceRecord, route: dict[str, Any], payload: dict[str, Any] | None) -> dict[str, Any]:
+    base_url = _service_base_url(service.service_id)
+    if not base_url:
+        raise ValueError(f"no base URL configured for service {service.service_id}")
+    path = str(route.get("path") or route.get("route") or "")
+    if not path or "{" in path:
+        raise ValueError(f"route path is not directly dispatchable: {path}")
+    method = str(route.get("method") or "GET").upper()
+    data = None
+    headers: dict[str, str] = {}
+    if payload is not None:
+        data = json.dumps(payload).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    req = request.Request(f"{base_url}{path}", data=data, headers=headers, method=method)
+    with request.urlopen(req, timeout=3) as response:
+        raw = response.read().decode("utf-8")
+    return json.loads(raw) if raw else {}
 
 
 def infer_capability(intent: str) -> str:
@@ -324,4 +381,69 @@ def resolve_request(
         "created_at": _utc_now_iso_z(),
         "source": service.source,
         "notes": service.notes,
+    }
+
+
+def dispatch_request(
+    intent: str,
+    capability: str = "",
+    payload: dict[str, Any] | None = None,
+    offline_only: bool = False,
+    approval_required: bool = False,
+    payload_ref: str = "",
+) -> dict[str, Any]:
+    resolution = resolve_request(
+        intent=intent,
+        capability=capability,
+        offline_only=offline_only,
+        approval_required=approval_required,
+        payload_ref=payload_ref,
+    )
+    if resolution["status"] != "delegated":
+        return resolution
+
+    candidates = [
+        service
+        for service in _all_service_records()
+        if service.service_id == resolution["destination_service"]
+        and service.surface == resolution["destination_surface"]
+    ]
+    if not candidates:
+        return {
+            **resolution,
+            "status": "unsupported",
+            "message": "Resolved destination service is not currently dispatchable.",
+        }
+
+    service = candidates[0]
+    if service.transport not in {"local-http", "https"}:
+        return {
+            **resolution,
+            "status": "unsupported",
+            "message": "Broker dispatch currently supports only local HTTP-style targets.",
+        }
+
+    route = _select_route(service, resolution["capability"], payload)
+    if route is None:
+        return {
+            **resolution,
+            "status": "unsupported",
+            "message": "No dispatchable route is published for this capability.",
+        }
+
+    try:
+        result = _dispatch_http_json(service, route, payload)
+    except (error.URLError, ValueError, json.JSONDecodeError) as exc:
+        return {
+            **resolution,
+            "status": "blocked_by_policy",
+            "message": str(exc),
+            "route": route,
+        }
+
+    return {
+        **resolution,
+        "status": "dispatched",
+        "route": route,
+        "result": result,
     }

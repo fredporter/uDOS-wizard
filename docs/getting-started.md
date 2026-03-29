@@ -1,6 +1,6 @@
-# uDOS-wizard Getting Started
+# uDOS Surface Getting Started
 
-This repo is the transitional home of the future `uDOS-surface` browser layer.
+This repo is the transitional home of the `uDOS-surface` browser layer.
 
 ## Fastest Path
 

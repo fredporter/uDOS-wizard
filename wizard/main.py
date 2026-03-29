@@ -68,7 +68,11 @@ from .uhome_bridge import (
 )
 from .workflow_state import get_workflow_store
 from .demo import build_demo_links
-from .broker import list_services as list_broker_services, resolve_request as resolve_broker_request
+from .broker import (
+    dispatch_request as dispatch_broker_request,
+    list_services as list_broker_services,
+    resolve_request as resolve_broker_request,
+)
 
 app = FastAPI(title="uDOS Surface Compatibility Host")
 
@@ -238,6 +242,21 @@ def wizard_resolve(payload: dict = Body(...)):
     return resolve_broker_request(
         intent=str(payload.get("intent") or ""),
         capability=str(payload.get("capability") or ""),
+        offline_only=bool(payload.get("offline_only", False)),
+        approval_required=bool(payload.get("approval_required", False)),
+        payload_ref=str(payload.get("payload_ref") or ""),
+    )
+
+
+@app.post("/wizard/dispatch")
+def wizard_dispatch(payload: dict = Body(...)):
+    broker_payload = payload.get("payload")
+    if broker_payload is not None and not isinstance(broker_payload, dict):
+        raise HTTPException(status_code=400, detail="payload must be an object when provided")
+    return dispatch_broker_request(
+        intent=str(payload.get("intent") or ""),
+        capability=str(payload.get("capability") or ""),
+        payload=broker_payload,
         offline_only=bool(payload.get("offline_only", False)),
         approval_required=bool(payload.get("approval_required", False)),
         payload_ref=str(payload.get("payload_ref") or ""),

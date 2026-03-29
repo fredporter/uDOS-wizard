@@ -1,2 +1,2 @@
 # API
-Wizard API routes and service entrypoints.
+Surface host routes plus Wizard broker entrypoints.

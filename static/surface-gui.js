@@ -165,7 +165,7 @@ function thinQueryPayload() {
     "",
     `Route focus: ${route}.`,
     "",
-    "This is the shared render preview surface used by Wizard and Thin GUI.",
+    "This is the shared render preview surface used by Surface and Thin GUI.",
   ]
     .filter(Boolean)
     .join("\n");

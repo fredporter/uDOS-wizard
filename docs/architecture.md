@@ -1,10 +1,9 @@
-# uDOS-wizard Architecture
+# uDOS Surface Architecture
 
-Transition note: architecturally, this document now describes the future
-`uDOS-surface` browser layer even though the repo path still says
-`uDOS-wizard`.
+Transition note: architecturally, this document describes the `uDOS-surface`
+browser layer even though the repo path still says `uDOS-wizard`.
 
-uDOS-wizard is the browser GUI, publishing, and themed presentation layer for
+uDOS Surface is the browser GUI, publishing, and themed presentation layer for
 the public family. It is not the base always-on command centre.
 
 ## Language and Runtime Role

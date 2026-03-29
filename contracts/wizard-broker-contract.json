@@ -27,10 +27,39 @@
         "approval_required",
         "payload_ref"
       ]
+    },
+    "dispatch": {
+      "method": "POST",
+      "path": "/wizard/dispatch",
+      "body": [
+        "intent",
+        "capability",
+        "payload",
+        "offline_only",
+        "approval_required",
+        "payload_ref"
+      ]
     }
   },
   "resolve_contract": {
     "result_statuses": [
+      "delegated",
+      "multiple_candidates",
+      "blocked_by_policy",
+      "unsupported",
+      "help"
+    ],
+    "required_fields": [
+      "request_id",
+      "broker",
+      "status",
+      "intent",
+      "capability"
+    ]
+  },
+  "dispatch_contract": {
+    "result_statuses": [
+      "dispatched",
       "delegated",
       "multiple_candidates",
       "blocked_by_policy",

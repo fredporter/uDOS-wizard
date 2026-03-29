@@ -16,6 +16,7 @@ It does not own runtime execution.
 
 - `GET /wizard/services`
 - `POST /wizard/resolve`
+- `POST /wizard/dispatch`
 
 ## Registry Source
 
@@ -48,6 +49,21 @@ Typical result:
   "destination_service": "uDOS-ubuntu",
   "destination_surface": "okd",
   "capability": "ok.transformation"
+}
+```
+
+Dispatch result:
+
+```json
+{
+  "status": "dispatched",
+  "destination_service": "uDOS-ubuntu",
+  "destination_surface": "okd",
+  "route": {
+    "method": "POST",
+    "path": "/ok/format",
+    "capability": "ok.transformation"
+  }
 }
 ```
 

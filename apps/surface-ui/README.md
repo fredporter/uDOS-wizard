@@ -6,7 +6,7 @@ This is the active Svelte/Tailwind frontend for the Surface operator GUI.
 
 Current scope:
 
-- render workbench against live Ubuntu-hosted and compatibility Wizard APIs
+- render workbench against live Ubuntu-hosted services and broker-compatible APIs
 - workflow and automation status views backed by Ubuntu and `uHOME-server`
 - Thin GUI parity view inside the Svelte app
 - live Launch lane for runtime visibility, render contract visibility, and thin-client access
