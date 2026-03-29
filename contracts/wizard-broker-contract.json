@@ -1,7 +1,17 @@
 {
   "version": "v1",
   "owner": "uDOS-wizard",
+  "service_id": "uDOS-wizard",
+  "surface": "broker",
+  "transport": "https",
+  "offline_safe": true,
+  "dispatch_mode": "direct",
   "package": "wizard-broker-contract",
+  "purpose": "Resolve family requests to the correct service and return delegation envelopes without taking execution authority.",
+  "capabilities": [
+    "wizard.services",
+    "wizard.resolve"
+  ],
   "routes": {
     "services": {
       "method": "GET",

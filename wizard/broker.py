@@ -43,32 +43,30 @@ INTENT_TO_CAPABILITY: tuple[tuple[tuple[str, ...], str], ...] = (
     (("schema", "validate", "contract"), "core.validate"),
 )
 
-
-def _surface_overlay_records() -> list[ServiceRecord]:
-    return [
-        ServiceRecord(
-            service_id="uDOS-surface",
-            owner="uDOS-surface",
-            surface="render",
-            capabilities=("surface.preview", "surface.publish"),
-            transport="https",
-            offline_safe=True,
-            dispatch_mode="direct",
-            source="surface-overlay",
-            notes="Surface owns browser presentation and preview.",
-        ),
-        ServiceRecord(
-            service_id="uDOS-wizard",
-            owner="uDOS-wizard",
-            surface="broker",
-            capabilities=("wizard.resolve", "wizard.services"),
-            transport="https",
-            offline_safe=True,
-            dispatch_mode="direct",
-            source="wizard-overlay",
-            notes="Wizard owns request brokering and service resolution.",
-        ),
-    ]
+def _local_surface_records() -> list[ServiceRecord]:
+    contract_paths = (
+        _family_root() / "uDOS-wizard" / "contracts" / "surface-render-surface.v1.json",
+        _family_root() / "uDOS-wizard" / "contracts" / "wizard-broker-contract.json",
+    )
+    records: list[ServiceRecord] = []
+    for path in contract_paths:
+        if not path.exists():
+            continue
+        payload = _read_json(path)
+        records.append(
+            ServiceRecord(
+                service_id=str(payload.get("service_id") or payload.get("owner") or "uDOS-wizard"),
+                owner=str(payload.get("owner") or "uDOS-wizard"),
+                surface=str(payload.get("surface") or "unknown"),
+                capabilities=tuple(str(capability) for capability in payload.get("capabilities", [])),
+                transport=str(payload.get("transport") or "https"),
+                offline_safe=bool(payload.get("offline_safe", True)),
+                dispatch_mode=str(payload.get("dispatch_mode") or "direct"),
+                source=str(path),
+                notes=str(payload.get("purpose") or ""),
+            )
+        )
+    return records
 
 
 def _core_contract_records() -> list[ServiceRecord]:
@@ -228,7 +226,7 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
 
 
 def _all_service_records() -> list[ServiceRecord]:
-    return _core_contract_records() + _ubuntu_contract_records() + _surface_overlay_records()
+    return _core_contract_records() + _ubuntu_contract_records() + _local_surface_records()
 
 
 def list_services() -> list[dict[str, Any]]:

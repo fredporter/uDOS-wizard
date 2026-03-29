@@ -1,0 +1,32 @@
+{
+  "version": "v1",
+  "surface_id": "surface-render-surface",
+  "owner": "uDOS-surface",
+  "service_id": "uDOS-surface",
+  "surface": "render",
+  "transport": "https",
+  "offline_safe": true,
+  "dispatch_mode": "direct",
+  "purpose": "Expose Surface browser preview and publishing as a broker-discoverable family surface.",
+  "capabilities": [
+    "surface.preview",
+    "surface.publish"
+  ],
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/render/preview",
+      "capability": "surface.preview"
+    },
+    {
+      "method": "POST",
+      "path": "/render/export",
+      "capability": "surface.publish"
+    },
+    {
+      "method": "GET",
+      "path": "/render/exports",
+      "capability": "surface.publish"
+    }
+  ]
+}

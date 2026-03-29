@@ -24,9 +24,11 @@ The broker now prefers contract-backed discovery:
 - `uDOS-core/contracts/runtime-services.json`
 - `uDOS-ubuntu/contracts/udos-commandd/wizard-host-surface.v1.json`
 - `uDOS-ubuntu/contracts/udos-commandd/minimum-operations.v1.json`
+- `contracts/surface-render-surface.v1.json`
+- `contracts/wizard-broker-contract.json`
 
-Small local overlays remain only for surfaces that do not yet publish their own
-first-class capability contracts.
+The broker now resolves all current local and Ubuntu-facing surfaces from
+checked-in contracts rather than hardcoded local overlays.
 
 ## Example
 
