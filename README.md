@@ -94,7 +94,7 @@ Ubuntu-hosted runtime command centre.
 - `wiki/README.md`
 - `wiki/unit-01-surface-basics.md`
 - `@dev/roadmap.md`
-- `@dev/devlog.md`
+- `@dev/todos.md`
 - `scripts/run-surface-checks.sh`
 
 ## Family Relation

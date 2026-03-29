@@ -15,3 +15,8 @@ DerivedData/
 .gradle/
 memory/
 .tmp/
+@dev/devlog.md
+@dev/history/
+@dev/archive/
+@dev/summaries/
+@dev/scratch/
