@@ -17,6 +17,17 @@ It does not own runtime execution.
 - `GET /wizard/services`
 - `POST /wizard/resolve`
 
+## Registry Source
+
+The broker now prefers contract-backed discovery:
+
+- `uDOS-core/contracts/runtime-services.json`
+- `uDOS-ubuntu/contracts/udos-commandd/wizard-host-surface.v1.json`
+- `uDOS-ubuntu/contracts/udos-commandd/minimum-operations.v1.json`
+
+Small local overlays remain only for surfaces that do not yet publish their own
+first-class capability contracts.
+
 ## Example
 
 ```json

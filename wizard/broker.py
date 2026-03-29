@@ -1,12 +1,22 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 
 def _utc_now_iso_z() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _family_root() -> Path:
+    return Path(__file__).resolve().parents[2]
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 @dataclass(frozen=True)
@@ -18,61 +28,8 @@ class ServiceRecord:
     transport: str
     offline_safe: bool
     dispatch_mode: str
+    source: str
     notes: str = ""
-
-
-SERVICE_REGISTRY: tuple[ServiceRecord, ...] = (
-    ServiceRecord(
-        service_id="uDOS-ubuntu",
-        owner="uDOS-ubuntu",
-        surface="okd",
-        capabilities=("ok.transformation", "ok.research", "ok.ingest"),
-        transport="https",
-        offline_safe=False,
-        dispatch_mode="direct",
-        notes="Ubuntu owns OK execution and provider-backed fallback.",
-    ),
-    ServiceRecord(
-        service_id="uDOS-ubuntu",
-        owner="uDOS-ubuntu",
-        surface="library",
-        capabilities=("library.browse", "library.search", "binder.view"),
-        transport="https",
-        offline_safe=True,
-        dispatch_mode="direct",
-        notes="Ubuntu serves the local library and binder views.",
-    ),
-    ServiceRecord(
-        service_id="uDOS-ubuntu",
-        owner="uDOS-ubuntu",
-        surface="network.beacon",
-        capabilities=("beacon.status", "network.status"),
-        transport="https",
-        offline_safe=True,
-        dispatch_mode="direct",
-        notes="Ubuntu owns beacon and network state.",
-    ),
-    ServiceRecord(
-        service_id="uDOS-surface",
-        owner="uDOS-surface",
-        surface="render",
-        capabilities=("surface.preview", "surface.publish"),
-        transport="https",
-        offline_safe=True,
-        dispatch_mode="direct",
-        notes="Surface owns browser presentation and preview.",
-    ),
-    ServiceRecord(
-        service_id="uDOS-core",
-        owner="uDOS-core",
-        surface="contracts",
-        capabilities=("core.validate", "core.schema.lookup"),
-        transport="local",
-        offline_safe=True,
-        dispatch_mode="direct",
-        notes="Core owns schemas, validation, and offline-safe contracts.",
-    ),
-)
 
 
 INTENT_TO_CAPABILITY: tuple[tuple[tuple[str, ...], str], ...] = (
@@ -80,10 +37,182 @@ INTENT_TO_CAPABILITY: tuple[tuple[tuple[str, ...], str], ...] = (
     (("research", "summarize", "analyse", "analyze"), "ok.research"),
     (("ingest", "capture", "link"), "ok.ingest"),
     (("library", "browse", "binder"), "library.browse"),
+    (("search",), "library.search"),
     (("beacon", "network", "wifi"), "beacon.status"),
     (("preview", "publish", "render"), "surface.preview"),
     (("schema", "validate", "contract"), "core.validate"),
 )
+
+
+def _surface_overlay_records() -> list[ServiceRecord]:
+    return [
+        ServiceRecord(
+            service_id="uDOS-surface",
+            owner="uDOS-surface",
+            surface="render",
+            capabilities=("surface.preview", "surface.publish"),
+            transport="https",
+            offline_safe=True,
+            dispatch_mode="direct",
+            source="surface-overlay",
+            notes="Surface owns browser presentation and preview.",
+        ),
+        ServiceRecord(
+            service_id="uDOS-wizard",
+            owner="uDOS-wizard",
+            surface="broker",
+            capabilities=("wizard.resolve", "wizard.services"),
+            transport="https",
+            offline_safe=True,
+            dispatch_mode="direct",
+            source="wizard-overlay",
+            notes="Wizard owns request brokering and service resolution.",
+        ),
+    ]
+
+
+def _core_contract_records() -> list[ServiceRecord]:
+    path = _family_root() / "uDOS-core" / "contracts" / "runtime-services.json"
+    if not path.exists():
+        return []
+    payload = _read_json(path)
+    records: list[ServiceRecord] = []
+    for service in payload.get("services", []):
+        key = str(service.get("key") or "")
+        if not key or "uDOS-wizard" not in service.get("consumers", []):
+            continue
+        capability = key.replace("runtime.", "core.", 1)
+        records.append(
+            ServiceRecord(
+                service_id="uDOS-core",
+                owner=str(service.get("owner") or "uDOS-core"),
+                surface="contracts",
+                capabilities=(capability,),
+                transport=str(service.get("route") or "local-kernel"),
+                offline_safe=True,
+                dispatch_mode="direct",
+                source=str(path),
+                notes=str(service.get("notes") or ""),
+            )
+        )
+    records.append(
+        ServiceRecord(
+            service_id="uDOS-core",
+            owner="uDOS-core",
+            surface="contracts",
+            capabilities=("core.validate", "core.schema.lookup"),
+            transport="local-kernel",
+            offline_safe=True,
+            dispatch_mode="direct",
+            source="core-overlay",
+            notes="Core owns schemas, validation, and offline-safe contracts.",
+        )
+    )
+    return records
+
+
+def _ubuntu_contract_records() -> list[ServiceRecord]:
+    family_root = _family_root()
+    host_surface_path = family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "wizard-host-surface.v1.json"
+    minimum_ops_path = family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "minimum-operations.v1.json"
+    records: list[ServiceRecord] = []
+
+    if host_surface_path.exists():
+        payload = _read_json(host_surface_path)
+        host_capabilities = tuple(
+            operation["operation_id"] for operation in payload.get("operations", []) if operation.get("operation_id")
+        )
+        if host_capabilities:
+            records.append(
+                ServiceRecord(
+                    service_id="uDOS-ubuntu",
+                    owner=str(payload.get("owner") or "uDOS-ubuntu"),
+                    surface="host",
+                    capabilities=host_capabilities,
+                    transport="local-http",
+                    offline_safe=True,
+                    dispatch_mode="direct",
+                    source=str(host_surface_path),
+                    notes=str(payload.get("purpose") or ""),
+                )
+            )
+
+    minimum_operations = []
+    if minimum_ops_path.exists():
+        minimum_operations = _read_json(minimum_ops_path).get("minimum_operations", [])
+
+    grouped: dict[str, dict[str, Any]] = {}
+    for operation in minimum_operations:
+        operation_id = str(operation.get("operation_id") or "")
+        if not operation_id:
+            continue
+        if operation_id.startswith("vault."):
+            key = "library"
+            capability = (
+                "library.search"
+                if operation_id == "vault.search"
+                else "binder.view" if operation_id == "vault.open" else "library.browse"
+            )
+        elif operation_id.startswith("network.beacon"):
+            key = "network.beacon"
+            capability = "beacon.status"
+        elif operation_id.startswith("network."):
+            key = "network"
+            capability = operation_id
+        elif operation_id.startswith("budget."):
+            key = "budget"
+            capability = operation_id
+        elif operation_id.startswith("jobs."):
+            key = "jobs"
+            capability = operation_id
+        elif operation_id.startswith("sync."):
+            key = "sync"
+            capability = operation_id
+        elif operation_id.startswith("publish.local."):
+            key = "publish.local"
+            capability = "surface.publish"
+        else:
+            continue
+        entry = grouped.setdefault(
+            key,
+            {
+                "capabilities": set(),
+                "transport": "local-http",
+                "offline_safe": True,
+                "notes": "Discovered from Ubuntu minimum operations.",
+            },
+        )
+        entry["capabilities"].add(capability)
+
+    grouped.setdefault(
+        "okd",
+        {
+            "capabilities": {"ok.transformation", "ok.research", "ok.ingest"},
+            "transport": "local-http",
+            "offline_safe": False,
+            "notes": "Temporary overlay until Ubuntu OKD publishes a first-class contract.",
+        },
+    )
+
+    for surface, entry in grouped.items():
+        records.append(
+            ServiceRecord(
+                service_id="uDOS-ubuntu",
+                owner="uDOS-ubuntu",
+                surface=surface,
+                capabilities=tuple(sorted(entry["capabilities"])),
+                transport=str(entry["transport"]),
+                offline_safe=bool(entry["offline_safe"]),
+                dispatch_mode="direct",
+                source=str(minimum_ops_path) if minimum_ops_path.exists() else "ubuntu-overlay",
+                notes=str(entry["notes"]),
+            )
+        )
+    return records
+
+
+def _all_service_records() -> list[ServiceRecord]:
+    return _core_contract_records() + _ubuntu_contract_records() + _surface_overlay_records()
 
 
 def list_services() -> list[dict[str, Any]]:
@@ -96,9 +225,10 @@ def list_services() -> list[dict[str, Any]]:
             "transport": service.transport,
             "offline_safe": service.offline_safe,
             "dispatch_mode": service.dispatch_mode,
+            "source": service.source,
             "notes": service.notes,
         }
-        for service in SERVICE_REGISTRY
+        for service in _all_service_records()
     ]
 
 
@@ -124,7 +254,7 @@ def resolve_request(
     resolved_capability = capability.strip() or infer_capability(intent)
     candidates = [
         service
-        for service in SERVICE_REGISTRY
+        for service in _all_service_records()
         if resolved_capability in service.capabilities
         and (not offline_only or service.offline_safe)
     ]
@@ -155,6 +285,7 @@ def resolve_request(
                     "surface": service.surface,
                     "dispatch_mode": service.dispatch_mode,
                     "offline_safe": service.offline_safe,
+                    "source": service.source,
                 }
                 for service in candidates
             ],
@@ -177,5 +308,6 @@ def resolve_request(
         "payload_ref": payload_ref or f"wizard://capture/{request_id}",
         "status_callback": f"/wizard/delegations/{request_id}",
         "created_at": _utc_now_iso_z(),
+        "source": service.source,
         "notes": service.notes,
     }
