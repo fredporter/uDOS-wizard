@@ -36,7 +36,46 @@ class APIContractTests(unittest.TestCase):
     def test_root_reports_wizard_service(self) -> None:
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"service": "wizard", "status": "ok"})
+        self.assertEqual(
+            response.json(),
+            {"service": "wizard", "status": "ok", "role": "broker-and-surface-host"},
+        )
+
+    def test_wizard_services_exposes_broker_registry(self) -> None:
+        response = self.client.get("/wizard/services")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["broker"], "wizard")
+        self.assertGreaterEqual(payload["count"], 3)
+        capabilities = {
+            capability
+            for service in payload["services"]
+            for capability in service["capabilities"]
+        }
+        self.assertIn("ok.transformation", capabilities)
+        self.assertIn("surface.preview", capabilities)
+
+    def test_wizard_resolve_delegates_doc_format_to_ubuntu_okd(self) -> None:
+        response = self.client.post(
+            "/wizard/resolve",
+            json={"intent": "format this doc", "payload_ref": "client://capture/1"},
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "delegated")
+        self.assertEqual(payload["destination_service"], "uDOS-ubuntu")
+        self.assertEqual(payload["destination_surface"], "okd")
+        self.assertEqual(payload["capability"], "ok.transformation")
+
+    def test_wizard_resolve_returns_help_when_constraints_eliminate_handlers(self) -> None:
+        response = self.client.post(
+            "/wizard/resolve",
+            json={"intent": "format this doc", "offline_only": True},
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "help")
+        self.assertEqual(payload["capability"], "ok.transformation")
 
     def test_port_status_route_reports_runtime_bind_snapshot(self) -> None:
         response = self.client.get("/port/status")

@@ -56,6 +56,13 @@ Surface should converge on:
 - themed story and workflow presentation
 - optional adapter surfaces only where they directly support GUI or publish work
 
+Wizard should converge on:
+
+- request brokering
+- service discovery
+- delegation envelope generation
+- broker-side help and routing responses
+
 Surface should not converge on:
 
 - primary runtime uptime ownership
@@ -63,6 +70,14 @@ Surface should not converge on:
 - networking, API budgeting, sync, or security ownership
 - canonical vault-hosting ownership
 - host config, secrets, or runtime policy ownership
+
+Wizard should not converge on:
+
+- provider routing ownership
+- budget enforcement
+- managed MCP lifecycle authority
+- network or beacon runtime control
+- secret-backed execution
 
 ## Current Activation Lane
 

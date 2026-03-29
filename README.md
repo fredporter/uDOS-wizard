@@ -6,11 +6,13 @@ rename is scheduled.
 
 ## Purpose
 
-Browser-facing publishing, workflow presentation, and themed GUI surfaces for
-uDOS v2.
+This repo now carries two tightly bounded roles:
 
-This repo should now be read as the `Surface` layer: the browser-facing portal,
-preview, and render surface above Ubuntu.
+- `Surface`: browser-facing publishing, workflow presentation, and themed GUI surfaces
+- `Wizard`: family delegation broker that resolves requests to the correct service
+
+The browser-facing product identity is `Surface`. The retained `Wizard` role is
+broker-only and does not reclaim runtime execution authority.
 
 ## Ownership
 
@@ -20,6 +22,8 @@ preview, and render surface above Ubuntu.
 - theme, skin, and story-driven operator display surfaces
 - optional remote publishing adapters that render or export content
 - browser preview parity for ThinUI and TUI operations
+- family request classification and service-resolution brokering
+- delegation envelope generation for family service handoff
 
 ## Non-Goals
 
@@ -29,6 +33,7 @@ preview, and render surface above Ubuntu.
 - network control-plane ownership
 - sync, security, or shared API authority
 - secrets, config, or local-state ownership for the base runtime
+- provider routing, budget policy, or managed MCP runtime authority
 
 ## Spine
 
@@ -69,6 +74,8 @@ Primary v2 lanes:
 - `/app/publishing`
 - `/app/thin-gui`
 - `/app/preview`
+- `/wizard/services`
+- `/wizard/resolve`
 
 The old Wizard config-heavy lane should contract out of the core release path.
 Base config, policy, budgeting, sync, and secrets should live in the
@@ -80,6 +87,7 @@ Ubuntu-hosted runtime command centre.
 - `docs/first-launch-quickstart.md`
 - `docs/architecture.md`
 - `docs/surface-transition.md`
+- `docs/wizard-broker.md`
 - `examples/basic-wizard-session.md`
 - `scripts/run-surface-checks.sh`
 

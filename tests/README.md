@@ -10,6 +10,7 @@ without a full provider stack:
 - budgeting policy
 - Beacon helpers
 - MCP registry
+- broker service resolution
 - API contracts over those helper surfaces
 
 Use this root for higher-level adapter and API tests as the repo matures.

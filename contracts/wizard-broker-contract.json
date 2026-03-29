@@ -1,0 +1,38 @@
+{
+  "version": "v1",
+  "owner": "uDOS-wizard",
+  "package": "wizard-broker-contract",
+  "routes": {
+    "services": {
+      "method": "GET",
+      "path": "/wizard/services"
+    },
+    "resolve": {
+      "method": "POST",
+      "path": "/wizard/resolve",
+      "body": [
+        "intent",
+        "capability",
+        "offline_only",
+        "approval_required",
+        "payload_ref"
+      ]
+    }
+  },
+  "resolve_contract": {
+    "result_statuses": [
+      "delegated",
+      "multiple_candidates",
+      "blocked_by_policy",
+      "unsupported",
+      "help"
+    ],
+    "required_fields": [
+      "request_id",
+      "broker",
+      "status",
+      "intent",
+      "capability"
+    ]
+  }
+}

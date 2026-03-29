@@ -12,6 +12,7 @@ Current first-launch surfaces:
 - compatibility browser GUI workbench at `/gui`
 - Thin GUI view at `/thin`
 - Svelte operator app at `/app`
+- broker endpoints at `/wizard/*`
 - saved render exports under `/rendered/...`
 
 `/app` is the primary Surface-compatible operator surface. `/gui` and `/thin`
@@ -91,6 +92,7 @@ http://127.0.0.1:8787/demo
 http://127.0.0.1:8787/app
 http://127.0.0.1:8787/gui
 http://127.0.0.1:8787/thin
+http://127.0.0.1:8787/wizard/services
 http://127.0.0.1:8787/render/contract
 http://127.0.0.1:8787/render/presets
 http://127.0.0.1:8787/render/exports
@@ -102,6 +104,7 @@ Expected results:
 - `/demo` returns the local lane index
 - `/gui` loads the older zero-build compatibility workbench
 - `/thin` loads the Thin GUI compatibility view
+- `/wizard/services` returns the broker-visible service registry
 - `/app` loads the route-based operator surface
 - `/render/contract` returns the shared Core-owned render contract
 - `/render/presets` returns prose presets and theme adapters

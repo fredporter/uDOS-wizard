@@ -25,7 +25,8 @@ Or:
 
 4. Use `docs/first-launch-quickstart.md` for the route list and manual launch
    path.
-5. Use `examples/basic-wizard-session.md` for the smallest operator walkthrough.
+5. Use `docs/wizard-broker.md` for the broker endpoints.
+6. Use `examples/basic-wizard-session.md` for the smallest operator walkthrough.
 
 ## Working Rules
 

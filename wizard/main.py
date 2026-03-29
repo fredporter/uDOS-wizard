@@ -68,6 +68,7 @@ from .uhome_bridge import (
 )
 from .workflow_state import get_workflow_store
 from .demo import build_demo_links
+from .broker import list_services as list_broker_services, resolve_request as resolve_broker_request
 
 app = FastAPI(title="uDOS Surface Compatibility Host")
 
@@ -108,6 +109,34 @@ def _ubuntu_host_surface_contract() -> dict[str, object]:
 
 
 def _register_mcp_tools() -> None:
+    registry.register(
+        "wizard.resolve",
+        "Resolve a family request to the correct service without taking execution authority.",
+        input_schema={
+            "type": "object",
+            "properties": {
+                "intent": {"type": "string"},
+                "capability": {"type": "string"},
+                "offline_only": {"type": "boolean"},
+                "approval_required": {"type": "boolean"},
+                "payload_ref": {"type": "string"}
+            },
+            "required": ["intent"],
+            "additionalProperties": False
+        },
+        annotations={
+            "owner": "uDOS-wizard",
+            "surface": "broker",
+            "route": "/wizard/resolve",
+        },
+        handler=lambda payload: resolve_broker_request(
+            intent=str(payload.get("intent") or ""),
+            capability=str(payload.get("capability") or ""),
+            offline_only=bool(payload.get("offline_only", False)),
+            approval_required=bool(payload.get("approval_required", False)),
+            payload_ref=str(payload.get("payload_ref") or ""),
+        ),
+    )
     registry.register(
         "ok.route",
         "Route an OK request through Wizard budget and provider policy.",
@@ -190,7 +219,29 @@ if surface_ui_dist_root.exists() and (surface_ui_dist_root / "assets").exists():
 
 @app.get("/")
 def root():
-    return {"service": "wizard", "status": "ok"}
+    return {"service": "wizard", "status": "ok", "role": "broker-and-surface-host"}
+
+
+@app.get("/wizard/services")
+def wizard_services():
+    services = list_broker_services()
+    return {
+        "version": "v1",
+        "broker": "wizard",
+        "count": len(services),
+        "services": services,
+    }
+
+
+@app.post("/wizard/resolve")
+def wizard_resolve(payload: dict = Body(...)):
+    return resolve_broker_request(
+        intent=str(payload.get("intent") or ""),
+        capability=str(payload.get("capability") or ""),
+        offline_only=bool(payload.get("offline_only", False)),
+        approval_required=bool(payload.get("approval_required", False)),
+        payload_ref=str(payload.get("payload_ref") or ""),
+    )
 
 @app.get("/assist")
 def assist(task: str = "demo", mode: str = "auto"):
