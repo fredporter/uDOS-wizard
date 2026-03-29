@@ -1,0 +1,3 @@
+[console_scripts]
+udos-wizard = wizard.main:run
+udos-wizard-demo = wizard.demo:main

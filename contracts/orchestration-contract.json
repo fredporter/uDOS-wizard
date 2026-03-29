@@ -13,7 +13,16 @@
       "query": [
         "task",
         "mode",
-        "surface"
+        "surface",
+        "execution_backend"
+      ]
+    },
+    "compile_dispatch": {
+      "method": "POST",
+      "path": "/compile/dispatch",
+      "body": [
+        "manifest",
+        "execution_backend"
       ]
     },
     "workflow_plan": {
@@ -45,11 +54,27 @@
       "dispatch_id",
       "request",
       "provider",
+      "execution_backend",
       "executor",
       "transport",
       "status",
       "route_contract",
       "callback_contract"
+    ]
+  },
+  "compile_dispatch_contract": {
+    "dispatch_version": "v2.4",
+    "required_fields": [
+      "dispatch_version",
+      "dispatch_id",
+      "binder_id",
+      "compile_id",
+      "target",
+      "provider",
+      "execution_backend",
+      "executor",
+      "transport",
+      "status"
     ]
   },
   "workflow_plan_contract": {

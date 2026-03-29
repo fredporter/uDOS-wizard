@@ -46,7 +46,7 @@ bash scripts/run-wizard-checks.sh
 Fastest local demo path:
 
 ```bash
-.venv/bin/udos-wizard-demo
+~/.udos/envs/family-py311/bin/udos-wizard-demo
 ```
 
 By default this launches the sibling `uHOME-server` repo and the Wizard
@@ -55,7 +55,7 @@ service together.
 Equivalent module launch:
 
 ```bash
-.venv/bin/python -m wizard.demo
+~/.udos/envs/family-py311/bin/python -m wizard.demo
 ```
 
 That launches:
@@ -79,7 +79,7 @@ http://127.0.0.1:8787/demo/links
 To launch Wizard without `uHOME-server`:
 
 ```bash
-.venv/bin/udos-wizard-demo --no-uhome
+~/.udos/envs/family-py311/bin/udos-wizard-demo --no-uhome
 ```
 
 ## Start The Service Manually
@@ -87,19 +87,19 @@ To launch Wizard without `uHOME-server`:
 From the repo root:
 
 ```bash
-.venv/bin/python -m wizard.main
+~/.udos/envs/family-py311/bin/python -m wizard.main
 ```
 
 Alternative:
 
 ```bash
-.venv/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
+~/.udos/envs/family-py311/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
 ```
 
 If installed as a package:
 
 ```bash
-.venv/bin/udos-wizard
+~/.udos/envs/family-py311/bin/udos-wizard
 ```
 
 Default local address:
@@ -122,13 +122,13 @@ next available port and prints the chosen port in the console.
 To force a specific port:
 
 ```bash
-UDOS_WIZARD_PORT=8788 .venv/bin/python -m wizard.main
+UDOS_WIZARD_PORT=8788 ~/.udos/envs/family-py311/bin/python -m wizard.main
 ```
 
 To disable auto-shift on the default port:
 
 ```bash
-UDOS_WIZARD_PORT_AUTO_SHIFT=0 .venv/bin/python -m wizard.main
+UDOS_WIZARD_PORT_AUTO_SHIFT=0 ~/.udos/envs/family-py311/bin/python -m wizard.main
 ```
 
 ## Optional Pairing: uHOME-server
@@ -144,7 +144,7 @@ http://127.0.0.1:8000
 If you need to override the paired runtime URL for Wizard:
 
 ```bash
-UHOME_SERVER_URL=http://127.0.0.1:8001 .venv/bin/python -m wizard.main
+UHOME_SERVER_URL=http://127.0.0.1:8001 ~/.udos/envs/family-py311/bin/python -m wizard.main
 ```
 
 ## First Browser Checks

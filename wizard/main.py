@@ -2,7 +2,7 @@ from pathlib import Path
 from html import escape
 import sys
 
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import ValidationError
 from fastapi.staticfiles import StaticFiles
@@ -41,6 +41,12 @@ from .secret_store import get_secret_store
 from .ok.provider_registry import ProviderRegistry
 from .ok.routing_engine import OKProviderRoutingEngine
 from .ok.mcp_policy import mcp_split_policy
+from .google_mvp import (
+    get_google_mvp_extraction_checklist,
+    get_google_mvp_generated_output_example,
+    get_google_mvp_lane_bundle,
+    get_google_mvp_prompt_template,
+)
 from .uhome_policy_contract import (
     get_uhome_network_policy_contract,
     get_uhome_network_policy_schema,
@@ -133,6 +139,21 @@ def _register_mcp_tools() -> None:
             ),
             "budget_groups": ok_provider_registry.budget_groups(),
         },
+    )
+    registry.register(
+        "ok.google_mvp.bundle",
+        "Inspect Wizard's Google MVP lane bundle for Empire prompt and extraction governance.",
+        input_schema={
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        },
+        annotations={
+            "owner": "uDOS-wizard",
+            "surface": "managed-mcp",
+            "route": "/ok/lanes/google-mvp-a",
+        },
+        handler=lambda payload: get_google_mvp_lane_bundle(),
     )
 
 
@@ -258,17 +279,64 @@ def route_ok_request(payload: dict = Body(...)):
 def get_ok_mcp_policy():
     return mcp_split_policy()
 
+
+@app.get("/ok/lanes/google-mvp-a")
+def get_ok_google_mvp_lane():
+    return get_google_mvp_lane_bundle()
+
+
+@app.get("/ok/lanes/google-mvp-a/prompt-template")
+def get_ok_google_mvp_prompt_template():
+    return get_google_mvp_prompt_template()
+
+
+@app.get("/ok/lanes/google-mvp-a/extraction-checklist")
+def get_ok_google_mvp_extraction_checklist():
+    return get_google_mvp_extraction_checklist()
+
+
+@app.get("/ok/lanes/google-mvp-a/generated-output-example")
+def get_ok_google_mvp_generated_output_example():
+    return get_google_mvp_generated_output_example()
+
 @app.get("/orchestration/status")
 def orchestration_status():
     return orchestration.status()
 
 @app.get("/orchestration/dispatch")
-def orchestration_dispatch(task: str = "demo", mode: str = "auto", surface: str = "assist"):
-    return orchestration.route(task=task, mode=mode, surface=surface)
+def orchestration_dispatch(
+    task: str = "demo", mode: str = "auto", surface: str = "assist", execution_backend: str = "native"
+):
+    try:
+        return orchestration.route(task=task, mode=mode, surface=surface, execution_backend=execution_backend)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 @app.get("/orchestration/workflow-plan")
 def orchestration_workflow_plan(objective: str = "shared-remote-flow", mode: str = "auto"):
     return orchestration.workflow_plan(objective=objective, mode=mode)
+
+
+@app.post("/compile/dispatch")
+def compile_dispatch(payload: dict = Body(...)):
+    try:
+        return orchestration.compile_dispatch(
+            manifest=payload.get("manifest", {}),
+            execution_backend=payload.get("execution_backend", "native"),
+            execution_mode=payload.get("execution_mode", "preview"),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/compile/results")
+def compile_results():
+    return orchestration.list_results(prefix="compile:")
+
+
+@app.get("/publish/queue")
+def publish_queue():
+    return orchestration.publish_queue()
 
 
 @app.post("/orchestration/callback")

@@ -1,0 +1,17 @@
+{
+  "lane_id": "google-mvp-a",
+  "task": "Generate the first Empire Google MVP service lane",
+  "task_class": "analysis",
+  "complexity": "L4",
+  "allowed_budget_groups": [
+    "tier2_premium"
+  ],
+  "provider_hint": "wizard.gemini",
+  "constraints": [
+    "Firestore is mirror storage only",
+    "Cloud Run binder trigger must stay approval-gated",
+    "Ubuntu local cache and degraded mode must remain valid",
+    "Extract routes, schema, env vars, auth model, and budget profile"
+  ],
+  "expected_extract_ref": "examples/google-mvp-generated-output-example.json"
+}

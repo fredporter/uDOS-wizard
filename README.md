@@ -45,7 +45,7 @@ operator flow.
 Fastest demo launch:
 
 ```bash
-.venv/bin/udos-wizard-demo
+~/.udos/envs/family-py311/bin/udos-wizard-demo
 ```
 
 Browser demo index:
@@ -75,6 +75,7 @@ Wizard now uses the shared `v2` dev config and local-state contract:
 - `docs/first-launch-quickstart.md`
 - `docs/activation.md`
 - `docs/v2.0.1-orchestration-foundation.md`
+- `docs/google-mvp-empire-lane.md`
 - `examples/basic-wizard-session.md`
 - `scripts/run-wizard-checks.sh`
 

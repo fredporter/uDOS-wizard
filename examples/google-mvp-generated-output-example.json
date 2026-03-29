@@ -1,0 +1,62 @@
+{
+  "lane_id": "google-mvp-a",
+  "status": "extracted-example",
+  "provider_family": "wizard.gemini",
+  "service": {
+    "name": "google-mvp-binder-trigger",
+    "deployment_target": "cloud-run",
+    "remote_role": "firestore-mirror"
+  },
+  "routes": [
+    {
+      "path": "/binder/google-mvp/mirror",
+      "method": "POST",
+      "purpose": "Receive approval-gated binder-trigger payloads for mirror writes"
+    },
+    {
+      "path": "/binder/google-mvp/status/{record_key}",
+      "method": "GET",
+      "purpose": "Inspect remote mirror status for an extracted artifact"
+    }
+  ],
+  "firestore_schema": {
+    "collections": [
+      {
+        "name": "binder_artifacts",
+        "fields": [
+          "record_key",
+          "artifact_ref",
+          "artifact_type",
+          "workflow_id",
+          "approval_state",
+          "mirrored_at"
+        ]
+      }
+    ]
+  },
+  "environment_variables": [
+    "GOOGLE_CLOUD_PROJECT",
+    "FIRESTORE_DATABASE",
+    "BINDER_TRIGGER_SECRET",
+    "GOOGLE_MVP_BUDGET_PROFILE"
+  ],
+  "auth_model": {
+    "inbound": "shared-secret or service-auth",
+    "shared_room": "firebase-auth optional"
+  },
+  "budget_profile": {
+    "default": "sandbox",
+    "idle_shutdown": "enabled",
+    "mirror_write_scope": "approved artifacts only"
+  },
+  "mirror_eligibility_rules": [
+    "artifact must be approved_for_mirror",
+    "source_of_truth must remain vault",
+    "record must be extractable into repo-owned docs or examples"
+  ],
+  "udos_mapping_notes": [
+    "Empire owns service supervision and policy",
+    "Ubuntu owns local cache and degraded-mode fallback",
+    "Wizard owns prompt generation and extraction governance"
+  ]
+}

@@ -77,14 +77,45 @@ class APIContractTests(unittest.TestCase):
         self.assertIn("wizard", payload["ownership"])
         self.assertIn("dev", payload["ownership"])
 
+    def test_ok_google_mvp_routes_expose_lane_prompt_and_extraction_contracts(self) -> None:
+        lane = self.client.get("/ok/lanes/google-mvp-a")
+        self.assertEqual(lane.status_code, 200)
+        lane_payload = lane.json()
+        self.assertEqual(lane_payload["lane_id"], "google-mvp-a")
+        self.assertEqual(lane_payload["provider_entry"]["provider_family"], "wizard.gemini")
+        self.assertEqual(
+            lane_payload["repo_targets"]["uDOS-empire"],
+            "Firestore mirror + Cloud Run binder supervision",
+        )
+
+        prompt = self.client.get("/ok/lanes/google-mvp-a/prompt-template")
+        self.assertEqual(prompt.status_code, 200)
+        prompt_payload = prompt.json()
+        self.assertEqual(prompt_payload["provider_hint"], "wizard.gemini")
+        self.assertIn("route list", prompt_payload["expected_outputs"])
+
+        extraction = self.client.get("/ok/lanes/google-mvp-a/extraction-checklist")
+        self.assertEqual(extraction.status_code, 200)
+        extraction_payload = extraction.json()
+        self.assertIn("route list", extraction_payload["required_artifacts"])
+        self.assertIn("prototype", extraction_payload["promotion_path"])
+
+        generated = self.client.get("/ok/lanes/google-mvp-a/generated-output-example")
+        self.assertEqual(generated.status_code, 200)
+        generated_payload = generated.json()
+        self.assertEqual(generated_payload["service"]["name"], "google-mvp-binder-trigger")
+        self.assertEqual(generated_payload["service"]["remote_role"], "firestore-mirror")
+        self.assertEqual(generated_payload["routes"][0]["path"], "/binder/google-mvp/mirror")
+
     def test_mcp_tools_route_lists_live_tools(self) -> None:
         response = self.client.get("/mcp/tools")
         self.assertEqual(response.status_code, 200)
         payload = response.json()
-        self.assertGreaterEqual(payload["count"], 2)
+        self.assertGreaterEqual(payload["count"], 3)
         tool_names = {tool["name"] for tool in payload["tools"]}
         self.assertIn("ok.route", tool_names)
         self.assertIn("ok.providers.list", tool_names)
+        self.assertIn("ok.google_mvp.bundle", tool_names)
 
     def test_mcp_invoke_route_executes_ok_route_tool(self) -> None:
         response = self.client.post(
@@ -156,10 +187,19 @@ class APIContractTests(unittest.TestCase):
         payload = response.json()
         self.assertEqual(payload["jsonrpc"], "2.0")
         self.assertEqual(payload["id"], "req-list")
-        self.assertGreaterEqual(payload["result"]["count"], 2)
+        self.assertGreaterEqual(payload["result"]["count"], 3)
         tool_names = {tool["name"] for tool in payload["result"]["tools"]}
         self.assertIn("ok.route", tool_names)
         self.assertIn("ok.providers.list", tool_names)
+        self.assertIn("ok.google_mvp.bundle", tool_names)
+
+    def test_mcp_invoke_route_executes_google_mvp_bundle_tool(self) -> None:
+        response = self.client.post("/mcp/tools/ok.google_mvp.bundle/invoke", json={})
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["invocation"]["tool"]["name"], "ok.google_mvp.bundle")
+        self.assertEqual(payload["invocation"]["result"]["lane_id"], "google-mvp-a")
 
     def test_uhome_network_policy_contract_and_schema_routes_expose_expected_keys(self) -> None:
         contract = self.client.get("/contracts/uhome/network-policy")
@@ -568,6 +608,11 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["foundation_version"], "v2.0.1")
         self.assertTrue(payload["runtime_service_source"].endswith("uDOS-core/contracts/runtime-services.json"))
         self.assertTrue(payload["orchestration_contract_source"].endswith("uDOS-wizard/contracts/orchestration-contract.json"))
+        self.assertTrue(
+            payload["execution_backends_contract_source"].endswith(
+                "uDOS-wizard/contracts/execution-backends-contract.json"
+            )
+        )
         self.assertEqual(payload["orchestration_contract_version"], "v2.0.2")
         self.assertTrue(payload["result_store_path"].endswith(".udos/state/wizard/orchestration-results.json"))
         self.assertEqual(payload["result_store_mode"], "file-json")
@@ -575,6 +620,9 @@ class APIContractTests(unittest.TestCase):
         self.assertIn("assist", services)
         runtime_services = {service["key"] for service in payload["runtime_services"]}
         self.assertIn("runtime.capability-registry", runtime_services)
+        backends = {backend["backend_id"] for backend in payload["execution_backends"]}
+        self.assertIn("native", backends)
+        self.assertIn("deerflow", backends)
 
     def test_orchestration_status_respects_overridden_result_store_path(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -595,10 +643,107 @@ class APIContractTests(unittest.TestCase):
         self.assertEqual(payload["task"], "remote-control")
         self.assertEqual(payload["surface"], "remote-control")
         self.assertEqual(payload["provider"], "wizard-provider")
+        self.assertEqual(payload["execution_backend"], "native")
         self.assertEqual(payload["dispatch_version"], "v2.0.2")
         self.assertEqual(payload["request"]["surface"], "remote-control")
         self.assertEqual(payload["route_contract"]["owner"], "uDOS-wizard")
         self.assertEqual(payload["callback_contract"]["route"], "/orchestration/callback")
+
+    def test_orchestration_dispatch_accepts_deerflow_backend(self) -> None:
+        response = self.client.get(
+            "/orchestration/dispatch",
+            params={
+                "task": "long-horizon-plan",
+                "mode": "auto",
+                "surface": "assist",
+                "execution_backend": "deerflow",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["execution_backend"], "deerflow")
+        self.assertEqual(payload["executor"], "deerflow-adapter")
+        self.assertTrue(payload["dispatch_id"].endswith(":deerflow"))
+
+    def test_orchestration_dispatch_rejects_unknown_backend(self) -> None:
+        response = self.client.get(
+            "/orchestration/dispatch",
+            params={"task": "demo", "mode": "auto", "surface": "assist", "execution_backend": "unknown"},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["detail"], "unknown execution backend: unknown")
+
+    def test_compile_dispatch_queues_manifest_with_selected_backend(self) -> None:
+        response = self.client.post(
+            "/compile/dispatch",
+            json={
+                "execution_backend": "deerflow",
+                "execution_mode": "preview",
+                "manifest": {
+                    "version": 1,
+                    "binder": {"id": "footloose-adelaide-launch", "type": "campaign", "title": "Footloose Adelaide Launch"},
+                    "compile": {
+                        "id": "compile-footloose-dashboard",
+                        "target": "dashboard",
+                        "template": "campaign-dashboard",
+                        "provider": "wizard",
+                        "status": "draft",
+                    },
+                    "views": [{"id": "summary", "kind": "card-grid"}],
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["dispatch_version"], "v2.4")
+        self.assertEqual(payload["binder_id"], "footloose-adelaide-launch")
+        self.assertEqual(payload["compile_id"], "compile-footloose-dashboard")
+        self.assertEqual(payload["execution_backend"], "deerflow")
+        self.assertEqual(payload["execution_mode"], "preview")
+        self.assertEqual(payload["executor"], "deerflow-adapter")
+        self.assertEqual(payload["status"], "dry-run")
+
+    def test_compile_dispatch_runs_controlled_deerflow_execution(self) -> None:
+        response = self.client.post(
+            "/compile/dispatch",
+            json={
+                "execution_backend": "deerflow",
+                "execution_mode": "controlled",
+                "manifest": {
+                    "version": 1,
+                    "binder": {"id": "footloose-adelaide-launch", "type": "campaign", "title": "Footloose Adelaide Launch"},
+                    "compile": {
+                        "id": "compile-footloose-dashboard",
+                        "target": "dashboard",
+                        "template": "campaign-dashboard",
+                        "provider": "wizard",
+                        "status": "draft",
+                    },
+                    "views": [{"id": "summary", "kind": "card-grid"}],
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["execution_mode"], "controlled")
+        self.assertEqual(payload["status"], "completed")
+        self.assertEqual(payload["result_preview"]["summary"]["artifactsProduced"], 1)
+
+    def test_compile_dispatch_rejects_invalid_manifest(self) -> None:
+        response = self.client.post(
+            "/compile/dispatch",
+            json={
+                "execution_backend": "native",
+                "manifest": {
+                    "version": 1,
+                    "binder": {"id": "missing-compile", "type": "campaign", "title": "Broken"},
+                    "compile": {"target": "dashboard", "provider": "wizard", "status": "draft"},
+                    "views": [{"id": "summary", "kind": "card-grid"}],
+                },
+            },
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["detail"], "compile manifest compile.id is required")
 
     def test_orchestration_workflow_plan_returns_shared_steps(self) -> None:
         response = self.client.get(

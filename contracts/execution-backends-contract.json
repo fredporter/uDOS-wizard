@@ -1,0 +1,21 @@
+{
+  "version": "v2.4",
+  "owner": "uDOS-wizard",
+  "default_backend": "native",
+  "backends": [
+    {
+      "backend_id": "native",
+      "label": "Native uDOS engine",
+      "optional": false,
+      "owner": "uDOS-core",
+      "executor": "provider-router"
+    },
+    {
+      "backend_id": "deerflow",
+      "label": "Deer Flow adapter",
+      "optional": true,
+      "owner": "uDOS-wizard",
+      "executor": "deerflow-adapter"
+    }
+  ]
+}
