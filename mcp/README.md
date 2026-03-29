@@ -1,6 +1,6 @@
 # MCP Bridge
 
-Managed MCP server and tool registration.
+Compatibility MCP bridge material for the browser-layer host.
 
 Active Round B surfaces:
 
@@ -8,8 +8,9 @@ Active Round B surfaces:
 - `POST /mcp/tools/{tool_name}/invoke`
 - `POST /mcp`
 
-Activation reference:
+Current references:
 
-- `docs/v2.2-mcp-vscode-activation.md`
+- `docs/architecture.md`
+- `docs/surface-transition.md`
 - `mcp/vscode-http-client-profile.json`
 - `mcp/vscode-extension/README.md`

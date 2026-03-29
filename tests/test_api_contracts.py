@@ -14,7 +14,24 @@ from wizard.orchestration import OrchestrationRegistry
 
 class APIContractTests(unittest.TestCase):
     def setUp(self) -> None:
+        self._temp_dir = tempfile.TemporaryDirectory()
+        temp_root = Path(self._temp_dir.name)
+        self._env_patch = patch.dict(
+            "os.environ",
+            {
+                "UDOS_STATE_ROOT": str(temp_root / "state"),
+                "WIZARD_STATE_ROOT": str(temp_root / "state" / "wizard"),
+                "UDOS_RENDER_ROOT": str(temp_root / "state" / "rendered"),
+                "WIZARD_RESULT_STORE_PATH": str(temp_root / "state" / "wizard" / "orchestration-results.json"),
+            },
+            clear=False,
+        )
+        self._env_patch.start()
         self.client = TestClient(app)
+
+    def tearDown(self) -> None:
+        self._env_patch.stop()
+        self._temp_dir.cleanup()
 
     def test_root_reports_wizard_service(self) -> None:
         response = self.client.get("/")
@@ -36,8 +53,83 @@ class APIContractTests(unittest.TestCase):
         payload = response.json()
         self.assertIn("entries", payload)
         keys = {entry["key"] for entry in payload["entries"]}
+        self.assertIn("UDOS_SURFACE_PORT", keys)
         self.assertIn("UDOS_WIZARD_PORT", keys)
         self.assertIn("OPENAI_API_KEY", keys)
+
+    def test_host_contract_route_reports_ubuntu_owned_surface(self) -> None:
+        response = self.client.get("/host/contract")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(payload["consumer"], "uDOS-wizard")
+        self.assertEqual(payload["base_path"], "/host")
+        self.assertEqual(payload["proxy_mode"], "wizard-compatibility-bridge")
+
+    def test_host_runtime_summary_route_wraps_config_summary(self) -> None:
+        response = self.client.get("/host/runtime-summary")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(payload["bridge"], "uDOS-wizard")
+        self.assertIn("summary", payload)
+        self.assertIn("entries", payload["summary"])
+
+    def test_host_local_state_routes_wrap_local_state_bridge(self) -> None:
+        response = self.client.get("/host/local-state")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(payload["bridge"], "uDOS-wizard")
+        self.assertIn("state", payload)
+
+        updated = self.client.post("/host/local-state", json={"preferences": {"viewport": "publishing"}})
+        self.assertEqual(updated.status_code, 200)
+        updated_payload = updated.json()
+        self.assertEqual(updated_payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(updated_payload["state"]["preferences"]["viewport"], "publishing")
+
+    def test_host_secrets_routes_wrap_secret_bridge(self) -> None:
+        created = self.client.post("/host/secrets", json={"key": "TEST_HOST_SECRET", "value": "abc"})
+        self.assertEqual(created.status_code, 200)
+        created_payload = created.json()
+        self.assertEqual(created_payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(created_payload["key"], "TEST_HOST_SECRET")
+
+        listed = self.client.get("/host/secrets")
+        self.assertEqual(listed.status_code, 200)
+        listed_payload = listed.json()
+        self.assertEqual(listed_payload["owner"], "uDOS-ubuntu")
+        keys = {item["key"] for item in listed_payload["keys"]}
+        self.assertIn("TEST_HOST_SECRET", keys)
+
+    def test_host_budget_status_route_wraps_budget_bridge(self) -> None:
+        response = self.client.get("/host/budget-status")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(payload["bridge"], "uDOS-wizard")
+        self.assertIn("budget", payload)
+        self.assertEqual(payload["budget"]["daily_limit"], 100)
+
+    def test_host_providers_route_wraps_provider_bridge(self) -> None:
+        response = self.client.get("/host/providers")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(payload["bridge"], "uDOS-wizard")
+        self.assertGreaterEqual(payload["count"], 5)
+        provider_ids = {item["provider_id"] for item in payload["providers"]}
+        self.assertIn("wizard.openai", provider_ids)
+
+    def test_host_orchestration_status_route_wraps_runtime_bridge(self) -> None:
+        response = self.client.get("/host/orchestration-status")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["owner"], "uDOS-ubuntu")
+        self.assertEqual(payload["bridge"], "uDOS-wizard")
+        self.assertIn("orchestration", payload)
+        self.assertIn("runtime_services", payload["orchestration"])
 
     def test_ok_provider_registry_routes_expose_provider_manifests(self) -> None:
         response = self.client.get("/ok/providers")
@@ -354,7 +446,7 @@ class APIContractTests(unittest.TestCase):
             ):
                 state = self.client.get("/workflow/state")
                 self.assertEqual(state.status_code, 200)
-                self.assertEqual(state.json()["workflow_id"], "wizard-default")
+                self.assertEqual(state.json()["workflow_id"], "surface-default")
 
                 action = self.client.post(
                     "/workflow/actions",
@@ -614,7 +706,7 @@ class APIContractTests(unittest.TestCase):
             )
         )
         self.assertEqual(payload["orchestration_contract_version"], "v2.0.2")
-        self.assertTrue(payload["result_store_path"].endswith(".udos/state/wizard/orchestration-results.json"))
+        self.assertTrue(payload["result_store_path"].endswith("wizard/orchestration-results.json"))
         self.assertEqual(payload["result_store_mode"], "file-json")
         services = {service["service"] for service in payload["services"]}
         self.assertIn("assist", services)

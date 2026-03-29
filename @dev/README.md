@@ -1,13 +1,15 @@
 # `uDOS-wizard` Dev Workspace
 
-This repo owns its own development rounds under `@dev/`.
+Historical repo-local dev material has been aggressively pruned.
 
-Use this workspace for:
+Active architectural decisions should live in:
 
-- repo-specific requests in `@dev/requests/`
-- repo-specific submissions in `@dev/submissions/`
-- repo-specific notes in `@dev/notes/`
-- repo-specific round records in `@dev/rounds/`
+- `README.md`
+- `docs/architecture.md`
+- `docs/getting-started.md`
+- `docs/first-launch-quickstart.md`
+- `docs/surface-transition.md`
+- `uDOS-ubuntu/@dev/udos-ubuntu-v2/`
 
 Family-wide planning, cross-repo routing, and release coordination stay in
 `uDOS-dev/@dev`.

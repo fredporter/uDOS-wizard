@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uDOS Surface GUI</title>
+    <link rel="stylesheet" href="/ui-assets/surface-gui.css" />
+  </head>
+  <body data-ui-mode="surface">
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">uDOS Surface</p>
+          <h1>Legacy Render Workbench</h1>
+          <p class="lede">
+            Transitional zero-build surface aligned to the new workflow, automation, render, and
+            Thin GUI product lanes.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <a class="action-link" href="/app/publishing">Publishing</a>
+          <a class="action-link" href="/app/workflow">Workflow</a>
+          <a class="action-link" href="/app/automation">Automation</a>
+          <a class="action-link" href="/app/thin-gui">Thin GUI</a>
+          <a class="action-link" href="/thin">Open Thin GUI</a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="control-panel card">
+          <div class="section-head">
+            <h2>Render Controls</h2>
+            <div class="button-row">
+              <button id="preview-button" type="button">Render Preview</button>
+              <button id="export-button" type="button">Export Output</button>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <label>
+              <span>Target</span>
+              <select id="target"></select>
+            </label>
+            <label>
+              <span>Prose Preset</span>
+              <select id="prose-preset"></select>
+            </label>
+            <label>
+              <span>Theme Adapter</span>
+              <select id="theme-adapter"></select>
+            </label>
+            <label>
+              <span>Skin</span>
+              <select id="skin-id"></select>
+            </label>
+            <label>
+              <span>Lens</span>
+              <input id="lens-id" type="text" placeholder="explorer" />
+            </label>
+            <label>
+              <span>Font Scale</span>
+              <select id="font-scale">
+                <option value="-1">-1</option>
+                <option value="0" selected>0</option>
+                <option value="1">+1</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="markdown-field">
+            <span>Markdown</span>
+            <textarea id="markdown-input" spellcheck="false"></textarea>
+          </label>
+        </section>
+
+        <section class="preview-column">
+          <section class="status-grid">
+            <article class="card status-card">
+              <p class="status-label">Service</p>
+              <strong id="service-status">Loading</strong>
+              <span id="service-detail">Fetching orchestration status</span>
+            </article>
+            <article class="card status-card">
+              <p class="status-label">Theme</p>
+              <strong id="theme-name">-</strong>
+              <span id="theme-detail">No theme selected</span>
+            </article>
+            <article class="card status-card">
+              <p class="status-label">Prose</p>
+              <strong id="prose-name">-</strong>
+              <span id="prose-detail">No preset loaded</span>
+            </article>
+          </section>
+
+          <section class="card render-card">
+            <div class="section-head">
+              <h2>Rendered Output</h2>
+              <span class="pill" id="preview-target-pill">gui-preview</span>
+            </div>
+            <div class="render-surface">
+              <div id="preview-surface" class="preview-surface"></div>
+            </div>
+          </section>
+
+          <section class="card source-card">
+            <div class="section-head">
+              <h2>HTML Source</h2>
+              <span class="pill">semantic html</span>
+            </div>
+            <pre id="html-source"></pre>
+          </section>
+
+          <section class="card source-card">
+            <div class="section-head">
+              <h2>Saved Exports</h2>
+              <span class="pill">artifact-backed</span>
+            </div>
+            <div id="export-list" class="export-list"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/ui-assets/surface-gui.js"></script>
+  </body>
+</html>

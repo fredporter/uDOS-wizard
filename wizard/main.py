@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from html import escape
 import sys
@@ -68,7 +69,7 @@ from .uhome_bridge import (
 from .workflow_state import get_workflow_store
 from .demo import build_demo_links
 
-app = FastAPI(title="uDOS Wizard Kernel")
+app = FastAPI(title="uDOS Surface Compatibility Host")
 
 load_dev_config()
 ensure_install_id()
@@ -79,10 +80,31 @@ beacon = BeaconNode()
 orchestration = OrchestrationRegistry()
 static_root = Path(__file__).resolve().parents[1] / "static"
 rendered_root = get_path("UDOS_RENDER_ROOT")
-wizard_ui_dist_root = Path(__file__).resolve().parents[1] / "apps" / "wizard-ui" / "dist"
+surface_ui_dist_root = Path(__file__).resolve().parents[1] / "apps" / "surface-ui" / "dist"
 runtime_bind_status = configured_runtime_bind_status()
 ok_provider_registry = ProviderRegistry()
 ok_routing_engine = OKProviderRoutingEngine(ok_provider_registry)
+
+
+def _family_root() -> Path:
+    return Path(__file__).resolve().parents[2]
+
+
+def _ubuntu_host_surface_contract_path() -> Path:
+    return _family_root() / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "wizard-host-surface.v1.json"
+
+
+def _ubuntu_host_surface_contract() -> dict[str, object]:
+    path = _ubuntu_host_surface_contract_path()
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    return {
+        "version": "v1",
+        "owner": "uDOS-ubuntu",
+        "consumer": "uDOS-wizard",
+        "base_path": "/host",
+        "operations": [],
+    }
 
 
 def _register_mcp_tools() -> None:
@@ -163,8 +185,8 @@ if static_root.exists():
     app.mount("/ui-assets", StaticFiles(directory=str(static_root)), name="ui-assets")
 rendered_root.mkdir(parents=True, exist_ok=True)
 app.mount("/rendered", StaticFiles(directory=str(rendered_root)), name="rendered")
-if wizard_ui_dist_root.exists() and (wizard_ui_dist_root / "assets").exists():
-    app.mount("/app-assets", StaticFiles(directory=str(wizard_ui_dist_root / "assets")), name="app-assets")
+if surface_ui_dist_root.exists() and (surface_ui_dist_root / "assets").exists():
+    app.mount("/app-assets", StaticFiles(directory=str(surface_ui_dist_root / "assets")), name="app-assets")
 
 @app.get("/")
 def root():
@@ -487,7 +509,7 @@ def beacon_announce():
 
 @app.get("/gui")
 def gui_shell():
-    return FileResponse(static_root / "wizard-gui.html")
+    return FileResponse(static_root / "surface-gui.html")
 
 
 @app.get("/thin")
@@ -581,7 +603,7 @@ def demo_shell():
   <body>
     <main>
       <h1>uDOS Demo Links</h1>
-      <p>Use <code>.venv/bin/udos-wizard-demo</code> or <code>.venv/bin/python -m wizard.demo</code> to launch the local Wizard demo stack, then open any lane from this page.</p>
+      <p>Use <code>.venv/bin/udos-surface-demo</code>, <code>.venv/bin/udos-wizard-demo</code>, or <code>.venv/bin/python -m wizard.demo</code> to launch the local Surface compatibility stack, then open any lane from this page.</p>
       <p>Wizard base: <a href="{escape(payload["wizard_base_url"])}">{escape(payload["wizard_base_url"])}</a><br>uHOME base: <a href="{escape(payload["uhome_base_url"])}">{escape(payload["uhome_base_url"])}</a></p>
       <ul>
         {links_markup}
@@ -594,25 +616,25 @@ def demo_shell():
 
 @app.get("/app")
 def svelte_app_shell():
-    if not wizard_ui_dist_root.exists():
+    if not surface_ui_dist_root.exists():
         return {
-            "service": "wizard-ui",
+            "service": "surface-ui",
             "status": "missing-build",
-            "hint": "Run npm run build in apps/wizard-ui to enable /app",
+            "hint": "Run npm run build in apps/surface-ui to enable /app",
         }
-    return FileResponse(wizard_ui_dist_root / "index.html")
+    return FileResponse(surface_ui_dist_root / "index.html")
 
 
 @app.get("/app/{path:path}")
 def svelte_app_spa(path: str):
-    if not wizard_ui_dist_root.exists():
+    if not surface_ui_dist_root.exists():
         return {
-            "service": "wizard-ui",
+            "service": "surface-ui",
             "status": "missing-build",
-            "hint": "Run npm run build in apps/wizard-ui to enable /app",
+            "hint": "Run npm run build in apps/surface-ui to enable /app",
             "path": path,
         }
-    return FileResponse(wizard_ui_dist_root / "index.html")
+    return FileResponse(surface_ui_dist_root / "index.html")
 
 
 @app.get("/render/contract")
@@ -713,6 +735,114 @@ def post_config_secret(payload: dict = Body(...)):
         return {"status": "error", "detail": "key is required"}
     get_secret_store().set_secret(key, value)
     return {"status": "ok", "key": key, "present": True}
+
+
+@app.get("/host/contract")
+def get_host_contract():
+    payload = dict(_ubuntu_host_surface_contract())
+    payload["proxy_mode"] = "wizard-compatibility-bridge"
+    return payload
+
+
+@app.get("/host/runtime-summary")
+def get_host_runtime_summary():
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/config/runtime-summary",
+        "summary": runtime_config_snapshot(),
+    }
+
+
+@app.get("/host/local-state")
+def get_host_local_state():
+    ensure_install_id()
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/config/local-state",
+        "state": load_local_state(),
+    }
+
+
+@app.post("/host/local-state")
+def post_host_local_state(payload: dict = Body(...)):
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/config/local-state",
+        "state": update_local_state(payload),
+    }
+
+
+@app.get("/host/secrets")
+def get_host_secrets():
+    store = get_secret_store()
+    keys = store.list_secret_keys()
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/config/secrets",
+        "keys": [{"key": key, "present": True} for key in keys],
+        "count": len(keys),
+    }
+
+
+@app.post("/host/secrets")
+def post_host_secret(payload: dict = Body(...)):
+    key = str(payload.get("key") or "").strip()
+    value = str(payload.get("value") or "")
+    if not key:
+        return {"status": "error", "detail": "key is required"}
+    get_secret_store().set_secret(key, value)
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/config/secrets",
+        "key": key,
+        "present": True,
+    }
+
+
+@app.get("/host/budget-status")
+def get_host_budget_status():
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/budget",
+        "budget": budget.get(),
+    }
+
+
+@app.get("/host/providers")
+def get_host_providers():
+    providers = ok_provider_registry.list_providers(enabled_only=False)
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/ok/providers",
+        "providers": providers,
+        "count": len(providers),
+        "budget_groups": ok_provider_registry.budget_groups(),
+    }
+
+
+@app.get("/host/orchestration-status")
+def get_host_orchestration_status():
+    return {
+        "owner": "uDOS-ubuntu",
+        "bridge": "uDOS-wizard",
+        "status": "compatibility-bridge",
+        "deprecated_source_route": "/orchestration/status",
+        "orchestration": orchestration.status(),
+    }
 
 def run():
     bind_plan = resolve_bind_plan()

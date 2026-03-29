@@ -1,22 +1,26 @@
-# Basic Wizard Session
+# Basic Surface Session
 
-Use this example to exercise the current `uDOS-wizard` starter surfaces and the
-new browser GUI workbench.
+Use this example to exercise the current browser-layer compatibility host and
+the Surface-facing GUI workbench.
+
+This is the browser and publishing path. `uHOME`, Empire, Grid, and other
+optional lanes are not required for this basic flow.
 
 ## Start The Service
 
 ```bash
-bash scripts/run-wizard-checks.sh
+bash scripts/run-surface-checks.sh
 .venv/bin/python -m wizard.main
 ```
 
-If port `8787` is occupied, Wizard now auto-shifts to the next free port unless
-`UDOS_WIZARD_PORT_AUTO_SHIFT=0` is set.
+If port `8787` is occupied, the compatibility host auto-shifts to the next
+free port unless `UDOS_SURFACE_PORT_AUTO_SHIFT=0` is set. The older
+`UDOS_WIZARD_PORT_AUTO_SHIFT` alias still works.
 
 Or, after installation:
 
 ```bash
-.venv/bin/udos-wizard
+.venv/bin/udos-surface
 ```
 
 Alternative explicit server launch:
@@ -28,44 +32,25 @@ Alternative explicit server launch:
 ## Example Routes
 
 ```text
-GET /                     -> service health
-GET /assist?task=demo     -> assist routing preview
-GET /budget               -> budgeting policy snapshot
-GET /mcp/tools            -> MCP registry listing
-POST /mcp                 -> JSON-RPC initialize/tools/list/tools/call
-GET /beacon/announce      -> Beacon availability check
-GET /gui                  -> browser GUI workbench
-GET /thin                 -> Thin GUI shared preview lane
-GET /render/contract      -> Core-owned render contract
-GET /render/presets       -> prose presets, theme adapters, gameplay skins
-GET /render/exports       -> saved export list
-GET /grid/contracts/grid-place -> Grid-owned spatial place contract
-GET /grid/seeds/places    -> starter Grid place registry
-GET /grid/resolve         -> resolve a place ref against Grid starter data
-POST /grid/validate-place -> validate place or artifact requirements against Grid seed
-GET /config/local-state   -> persisted local install/user state
-POST /config/local-state  -> update persisted local install/user state
-GET /config/secrets       -> list stored secret keys
-POST /config/secrets      -> set encrypted local secret
-GET /config/runtime       -> inspect runtime config source/presence
-POST /render/preview      -> semantic HTML preview payload
-POST /render/export       -> saved HTML + manifest export
+GET /                  -> service health
+GET /gui               -> browser GUI workbench
+GET /thin              -> Thin GUI shared preview lane
+GET /render/contract   -> Core-owned render contract
+GET /render/presets    -> prose presets, theme adapters, gameplay skins
+GET /render/exports    -> saved export list
+POST /render/preview   -> semantic HTML preview payload
+POST /render/export    -> saved HTML + manifest export
 ```
 
 ## What To Expect
 
-- Wizard returns transport-facing preview data
-- assist mode can switch between fallback and provider-backed lanes
-- budgeting remains a policy surface, not execution semantics
-- MCP and Beacon stay behind Wizard, not Core or Shell
+- the compatibility host returns preview-facing data
 - GUI and Thin GUI use the same shared preview contract
 - export writes HTML and manifest files under `$UDOS_STATE_ROOT/rendered/`
-- secret-like runtime keys can come from the encrypted Wizard secret store
-- Grid routes consume canonical spatial truth from `uDOS-grid` without making Wizard the place owner
 
 ## First GUI Flow
 
-1. Start Wizard.
+1. Start the compatibility host.
 2. Open `http://127.0.0.1:8787/gui`.
 3. Click `Render Preview`.
 4. Click `Export Output`.

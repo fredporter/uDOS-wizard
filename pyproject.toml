@@ -3,13 +3,15 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "udos-wizard"
+name = "udos-surface"
 version = "0.2.0"
-description = "uDOS wizard service and AI/network kernel starter"
+description = "uDOS surface browser host and compatibility service"
 requires-python = ">=3.11"
 dependencies = ["cryptography", "fastapi", "uvicorn"]
 
 [project.scripts]
+udos-surface = "wizard.main:run"
+udos-surface-demo = "wizard.demo:main"
 udos-wizard = "wizard.main:run"
 udos-wizard-demo = "wizard.demo:main"
 

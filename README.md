@@ -1,33 +1,40 @@
 # uDOS-wizard
 
+Transition note: this repo is converging on `uDOS-surface` as the browser GUI
+identity. `Wizard` remains a compatibility name here until the mechanical
+rename is scheduled.
+
 ## Purpose
 
-Network-facing assist, provider, MCP, and bounded autonomy services for uDOS v2.
+Browser-facing publishing, workflow presentation, and themed GUI surfaces for
+uDOS v2.
+
+This repo should now be read as the `Surface` layer: the browser-facing portal,
+preview, and render surface above Ubuntu.
 
 ## Ownership
 
-- API and transport services
-- provider bridges
-- MCP bridge
-- budgeting and autonomy policy
-- assist and generative workflows
-- browser operator workflow surfaces
-- workflow authority and automation handoff
-- Beacon control-plane services
+- browser GUI surfaces above the Ubuntu runtime host
+- publishing views and render outputs
+- workflow and binder-style browser presentation
+- theme, skin, and story-driven operator display surfaces
+- optional remote publishing adapters that render or export content
+- browser preview parity for ThinUI and TUI operations
 
 ## Non-Goals
 
 - canonical runtime semantics
 - interactive shell ownership
-- persistent home service ownership
+- persistent host runtime ownership
+- network control-plane ownership
+- sync, security, or shared API authority
+- secrets, config, or local-state ownership for the base runtime
 
 ## Spine
 
-- `services/api/`
-- `services/runtime/assist/`
-- `services/runtime/budgeting/`
-- `services/runtime/providers/`
-- `services/runtime/beacon/`
+- `apps/surface-ui/`
+- `static/`
+- `wizard/`
 - `mcp/`
 - `docs/`
 - `tests/`
@@ -36,16 +43,17 @@ Network-facing assist, provider, MCP, and bounded autonomy services for uDOS v2.
 
 ## Local Development
 
-Treat external providers as adapters behind stable public contracts.
-Use `scripts/run-wizard-checks.sh` as the default local validation entrypoint.
-Use `docs/getting-started.md` for the install and validation path, and use
-`docs/first-launch-quickstart.md` for the paired Wizard and `uHOME-server`
-operator flow.
+Treat this repo as a presentation and publishing repo first. Surface browser
+workflows should consume host-exposed operations and shared theme contracts
+instead of owning runtime state directly.
+
+Use `scripts/run-surface-checks.sh` as the default local validation entrypoint.
+Use `docs/getting-started.md` for the install and validation path.
 
 Fastest demo launch:
 
 ```bash
-~/.udos/envs/family-py311/bin/udos-wizard-demo
+~/.udos/envs/family-py311/bin/udos-surface-demo
 ```
 
 Browser demo index:
@@ -60,37 +68,33 @@ Primary v2 lanes:
 - `/app/automation`
 - `/app/publishing`
 - `/app/thin-gui`
-- `/app/config`
+- `/app/preview`
 
-Wizard now uses the shared `v2` dev config and local-state contract:
+The old Wizard config-heavy lane should contract out of the core release path.
+Base config, policy, budgeting, sync, and secrets should live in the
+Ubuntu-hosted runtime command centre.
 
-- config roots come from repo `.env`, `$UDOS_HOME/.env`, and local state
-- install and user state live under `$UDOS_STATE_ROOT/local-state.json`
-- encrypted local secrets live under `$WIZARD_STATE_ROOT/`
-- runtime inspection and mutation routes are available at `/config/*`
-
-## Activation References
+## Active References
 
 - `docs/getting-started.md`
 - `docs/first-launch-quickstart.md`
-- `docs/activation.md`
-- `docs/v2.0.1-orchestration-foundation.md`
-- `docs/google-mvp-empire-lane.md`
+- `docs/architecture.md`
+- `docs/surface-transition.md`
 - `examples/basic-wizard-session.md`
-- `scripts/run-wizard-checks.sh`
+- `scripts/run-surface-checks.sh`
 
 ## Family Relation
 
-Wizard enriches and transports work but should converge on Core semantics. It
-supports `uHOME-server` local-network pairing surfaces and `uDOS-empire`
-online networking or provider-facing integrations without owning their runtime
-behavior.
+Surface renders and presents work but should converge on Core semantics and the
+Ubuntu-hosted command registry. It should remain the browser-oriented GUI and
+publishing layer, not the source of host runtime truth.
 
-Wizard also consumes `uDOS-grid` for place and starter spatial registry
+Surface also consumes `uDOS-grid` for place and starter spatial registry
 inspection, but does not own canonical spatial identity.
 
 Current local product lanes:
 
-- `/app/workflow` for workflow state and runtime interpretation
-- `/app/automation` for `uHOME-server` handoff, queue, and result reconciliation
+- `/app/workflow` for workflow presentation over shared host operations
+- `/app/automation` for browser-facing review of background jobs
 - `/app/thin-gui` for Thin-GUI-oriented preview parity
+- `/app/publishing` for web publishing and output review

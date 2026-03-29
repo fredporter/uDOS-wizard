@@ -1,42 +1,38 @@
 # uDOS-wizard Getting Started
 
+This repo is the transitional home of the future `uDOS-surface` browser layer.
+
 ## Fastest Path
 
-1. Read `docs/boundary.md` and `docs/v2.0.4-network-boundary-lock.md` before changing any route, provider, or bridge behavior.
-2. Bootstrap the repo-local Python environment.
+1. Read `docs/architecture.md` and `docs/surface-transition.md`.
+2. Bootstrap and validate the repo:
 
 ```bash
-bash scripts/run-wizard-checks.sh
+bash scripts/run-surface-checks.sh
 ```
 
-This creates or reuses `.venv`, installs Wizard there, and runs the current
-test suite.
-
-1. Run the repo validation entrypoint again after edits.
+3. Launch the local compatibility host:
 
 ```bash
-bash scripts/run-wizard-checks.sh
+.venv/bin/udos-surface-demo
 ```
 
-1. Launch the guided demo stack.
-
-```bash
-.venv/bin/udos-wizard-demo
-```
-
-Or launch the same flow directly with:
+Or:
 
 ```bash
 .venv/bin/python -m wizard.demo
 ```
 
-1. Use `docs/first-launch-quickstart.md` for the full browser route list, manual launch path, and paired `uHOME-server` automation loop.
-1. Use `examples/basic-wizard-session.md` for the smallest operator walkthrough once the service is running.
+4. Use `docs/first-launch-quickstart.md` for the route list and manual launch
+   path.
+5. Use `examples/basic-wizard-session.md` for the smallest operator walkthrough.
 
 ## Working Rules
 
-- Read `docs/v2.0.3-port-binding.md` before changing host or port behavior.
-- Read `docs/first-launch-quickstart.md#dual-service-workflow-loop` before changing Wizard and `uHOME-server` handoff behavior.
-- Keep network adapters under `services/runtime/providers/`.
-- Route budget policy through `services/runtime/budgeting/`.
-- Add tests for every public adapter contract.
+- Treat this repo as browser presentation first.
+- Do not reintroduce provider routing, budget authority, managed MCP authority,
+  beacon runtime authority, or secret-backed host policy as Surface-owned
+  concerns.
+- Prefer Ubuntu-owned runtime surfaces for host policy, network, OK, and MCP
+  responsibilities.
+- Add tests for public browser-facing contracts that remain in this repo.

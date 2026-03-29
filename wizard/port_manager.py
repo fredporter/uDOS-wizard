@@ -60,10 +60,17 @@ def _env_flag(name: str, default: bool = False) -> bool:
 
 
 def configured_host() -> str:
-    return get_str("UDOS_WIZARD_HOST", DEFAULT_HOST).strip() or DEFAULT_HOST
+    return (
+        get_str("UDOS_SURFACE_HOST", "").strip()
+        or get_str("UDOS_WIZARD_HOST", DEFAULT_HOST).strip()
+        or DEFAULT_HOST
+    )
 
 
 def configured_port() -> tuple[int, str]:
+    raw = get_str("UDOS_SURFACE_PORT", "")
+    if raw.strip():
+        return get_int("UDOS_SURFACE_PORT", DEFAULT_PORT), "env"
     raw = get_str("UDOS_WIZARD_PORT", "")
     if not raw.strip():
         return DEFAULT_PORT, "default"
@@ -135,7 +142,8 @@ def resolve_bind_plan(host: str | None = None, port: int | None = None) -> BindP
 
     occupant = detect_port_occupant(requested_port)
     auto_shift_allowed = (
-        port_source == "default" and _env_flag("UDOS_WIZARD_PORT_AUTO_SHIFT", default=True)
+        port_source == "default"
+        and (_env_flag("UDOS_SURFACE_PORT_AUTO_SHIFT", default=True) if get_str("UDOS_SURFACE_PORT_AUTO_SHIFT", "").strip() else _env_flag("UDOS_WIZARD_PORT_AUTO_SHIFT", default=True))
     )
     if auto_shift_allowed:
         candidate = find_available_port(resolved_host, requested_port)
@@ -158,15 +166,15 @@ def format_bind_failure(
     port_source: str,
     occupant: PortOccupant | None,
 ) -> str:
-    base = f"Wizard could not bind {host}:{port} (source={port_source})."
+    base = f"Surface compatibility host could not bind {host}:{port} (source={port_source})."
     if occupant is None:
         return (
-            f"{base} The port is already in use. Set UDOS_WIZARD_PORT to a free port "
+            f"{base} The port is already in use. Set UDOS_SURFACE_PORT or UDOS_WIZARD_PORT to a free port "
             "or stop the existing listener."
         )
     return (
         f"{base} Occupied by {occupant.process} (PID {occupant.pid}). "
-        "Stop that process or set UDOS_WIZARD_PORT to a free port."
+        "Stop that process or set UDOS_SURFACE_PORT or UDOS_WIZARD_PORT to a free port."
     )
 
 

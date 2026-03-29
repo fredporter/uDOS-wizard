@@ -5,6 +5,9 @@ from udos_core.dev_config import load_dev_config
 from .secret_store import get_secret_store
 
 DEFAULT_RUNTIME_KEYS = (
+    "UDOS_SURFACE_HOST",
+    "UDOS_SURFACE_PORT",
+    "UDOS_SURFACE_PORT_AUTO_SHIFT",
     "UDOS_WIZARD_HOST",
     "UDOS_WIZARD_PORT",
     "UDOS_WIZARD_PORT_AUTO_SHIFT",

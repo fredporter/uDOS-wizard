@@ -1,8 +1,9 @@
 # `tests/`
 
-Repo-facing tests for `uDOS-wizard`.
+Repo-facing tests for the `uDOS-wizard` compatibility host and the future
+`uDOS-surface` browser layer.
 
-Current tests focus on Wizard-owned helper surfaces that can be validated
+Current tests focus on compatibility host surfaces that can be validated
 without a full provider stack:
 
 - assist routing

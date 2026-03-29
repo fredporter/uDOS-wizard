@@ -1,8 +1,0 @@
-Metadata-Version: 2.4
-Name: udos-wizard
-Version: 0.2.0
-Summary: uDOS wizard service and AI/network kernel starter
-Requires-Python: >=3.11
-Requires-Dist: cryptography
-Requires-Dist: fastapi
-Requires-Dist: uvicorn

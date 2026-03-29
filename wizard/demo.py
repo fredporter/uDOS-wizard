@@ -37,22 +37,24 @@ def configured_uhome_base_url(default_host: str, default_port: int) -> str:
 
 
 def build_demo_links(wizard_base_url: str, uhome_base_url: str) -> dict[str, str]:
-    return {
+    links = {
         "launch": f"{wizard_base_url}/app/launch",
         "workflow": f"{wizard_base_url}/app/workflow",
         "automation": f"{wizard_base_url}/app/automation",
         "publishing": f"{wizard_base_url}/app/publishing",
         "thin_gui": f"{wizard_base_url}/app/thin-gui",
-        "config": f"{wizard_base_url}/app/config",
+        "host": f"{wizard_base_url}/app/config",
         "legacy_gui": f"{wizard_base_url}/gui",
         "thin": f"{wizard_base_url}/thin",
         "wizard_demo_links": f"{wizard_base_url}/demo",
-        "uhome_thin_automation": f"{uhome_base_url}/api/runtime/thin/automation",
     }
+    if uhome_base_url:
+        links["uhome_thin_automation"] = f"{uhome_base_url}/api/runtime/thin/automation"
+    return links
 
 
 def _print_demo_links(wizard_base_url: str, uhome_base_url: str) -> None:
-    print("uDOS demo stack")
+    print("uDOS wizard demo")
     for label, url in build_demo_links(wizard_base_url, uhome_base_url).items():
         print(f"{label}: {url}")
 
@@ -70,6 +72,8 @@ def _spawn_uhome(host: str, port: int) -> subprocess.Popen[str]:
 
 def _spawn_wizard(host: str, port: int, uhome_url: str) -> subprocess.Popen[str]:
     env = os.environ.copy()
+    env["UDOS_SURFACE_HOST"] = host
+    env["UDOS_SURFACE_PORT"] = str(port)
     env["UDOS_WIZARD_HOST"] = host
     env["UDOS_WIZARD_PORT"] = str(port)
     env["UHOME_SERVER_URL"] = uhome_url
@@ -83,7 +87,10 @@ def _spawn_wizard(host: str, port: int, uhome_url: str) -> subprocess.Popen[str]
 
 def main(argv: list[str] | None = None) -> int:
     cli_args = list(argv) if argv is not None else sys.argv[1:]
-    parser = argparse.ArgumentParser(prog="udos-wizard-demo", description="Run the local Wizard + uHOME demo stack.")
+    parser = argparse.ArgumentParser(
+        prog="udos-surface-demo",
+        description="Run the local Surface compatibility stack, with optional paired uHOME service.",
+    )
     parser.add_argument("--wizard-host", default=DEFAULT_WIZARD_HOST)
     parser.add_argument("--wizard-port", type=int, default=DEFAULT_WIZARD_PORT)
     parser.add_argument("--uhome-host", default=DEFAULT_UHOME_HOST)
@@ -100,6 +107,7 @@ def main(argv: list[str] | None = None) -> int:
         bind_plan = resolve_bind_plan(host=args.wizard_host)
     wizard_base_url = build_base_url(bind_plan.host, bind_plan.port)
     uhome_base_url = configured_uhome_base_url(args.uhome_host, args.uhome_port)
+    printed_uhome_base_url = uhome_base_url if not args.no_uhome else ""
 
     processes: list[subprocess.Popen[str]] = []
     try:
@@ -111,9 +119,9 @@ def main(argv: list[str] | None = None) -> int:
         if bind_plan.auto_shifted:
             print(
                 f"uDOS demo stack: port {bind_plan.requested_port} unavailable; "
-                f"using {bind_plan.port} for Wizard."
+                f"using {bind_plan.port} for Surface."
             )
-        _print_demo_links(wizard_base_url, uhome_base_url)
+        _print_demo_links(wizard_base_url, printed_uhome_base_url)
 
         while True:
             for process in processes:

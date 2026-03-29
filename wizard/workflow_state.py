@@ -18,7 +18,7 @@ _ensure_core_on_path()
 from udos_core.dev_config import get_path
 
 
-DEFAULT_WORKFLOW_ID = "wizard-default"
+DEFAULT_WORKFLOW_ID = "surface-default"
 DEFAULT_STEP_ID = "step-1"
 
 
@@ -76,7 +76,7 @@ def default_workflow_state() -> dict[str, Any]:
         "status": "draft",
         "awaiting_user_action": True,
         "last_transition_at": now,
-        "origin_surface": "wizard",
+        "origin_surface": "surface",
     }
 
 
@@ -144,10 +144,10 @@ class WorkflowStateStore:
             "contract_version": "v2.0.4",
             "workflow_id": payload.get("workflow_id") or state["workflow_id"],
             "action": payload.get("action") or "advance",
-            "requested_by": payload.get("requested_by") or "wizard-ui",
+            "requested_by": payload.get("requested_by") or "surface-ui",
             "requested_at": payload.get("requested_at") or _utc_now_iso_z(),
             "policy_flags": payload.get("policy_flags") or {},
-            "origin_surface": payload.get("origin_surface") or "wizard",
+            "origin_surface": payload.get("origin_surface") or "surface",
         }
         items = _read_json_list(self._actions_path)
         items.append(action)
