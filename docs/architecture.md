@@ -1,10 +1,12 @@
 # uDOS Surface Architecture
 
-Transition note: architecturally, this document describes the `uDOS-surface`
-browser layer even though the repo path still says `uDOS-wizard`.
+Repo path `uDOS-wizard`; product layer **Surface** (browser) + **Wizard**
+(delegation broker only).
 
 uDOS Surface is the browser GUI, publishing, and themed presentation layer for
-the public family. It is not the base always-on command centre.
+the public family. It is not the base always-on command centre. **Wizard** does
+not own host policy or persistence—it **delegates** to `uDOS-ubuntu` surfaces
+defined in `wizard-host-surface.v1.json`.
 
 ## Language and Runtime Role
 

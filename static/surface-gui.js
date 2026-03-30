@@ -16,7 +16,7 @@ function defaultMarkdown() {
     "---",
     "# Shared render preview",
     "",
-    "This legacy surface closes the gap between contracts and actual browser output.",
+    "This render preview ties contracts to browser output (Surface-owned demo path).",
     "",
     "- Core owns the render contract",
     "- Themes owns presets and adapters",

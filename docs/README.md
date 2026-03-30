@@ -18,6 +18,8 @@ Do not use `/docs` for:
 
 ## Active Docs
 
+- `activation.md`
+  - repo activation path and validation entrypoint (family standard)
 - `architecture.md`
   - browser-layer ownership, Ubuntu/Core boundaries, and the broker split
 - `getting-started.md`

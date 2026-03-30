@@ -1,19 +1,17 @@
 # uDOS Surface
 
-Transition note: this repo still lives at the `uDOS-wizard` path, but the
-browser GUI identity is now `uDOS-surface`. `Wizard` remains here only as the
-broker compatibility role and package/module carryover until the deeper
-mechanical rename is complete.
+Public clone path: **`uDOS-wizard`**. Product roles: **Surface** (browser) and
+**Wizard** (delegation pointer only—no host runtime).
 
 ## Purpose
 
-This repo now carries two tightly bounded roles:
+Two bounded roles:
 
-- `Surface`: browser-facing publishing, workflow presentation, and themed GUI surfaces
-- `Wizard`: family delegation broker that resolves requests to the correct service
-
-The browser-facing product identity is `Surface`. The retained `Wizard` role is
-broker-only and does not reclaim runtime execution authority.
+- **Surface:** browser publishing, workflow presentation, themed GUI, preview parity
+- **Wizard:** **delegation broker**—classify intent, resolve the correct family
+  service, return a delegation envelope. It **points** at Ubuntu-hosted
+  contracts (`wizard-host-surface.v1.json`); it does **not** store base config,
+  vault, sync, budgets, or secrets (those live on `uDOS-ubuntu`).
 
 ## Ownership
 
@@ -79,16 +77,13 @@ Primary v2 lanes:
 - `/wizard/resolve`
 - `/wizard/dispatch`
 
-The old Wizard config-heavy lane should contract out of the core release path.
-Base config, policy, budgeting, sync, and secrets should live in the
-Ubuntu-hosted runtime command centre.
-
 ## Active References
 
 - `docs/README.md`
 - `docs/getting-started.md`
 - `docs/first-launch-quickstart.md`
 - `docs/architecture.md`
+- `docs/activation.md`
 - `docs/wizard-broker.md`
 - `examples/basic-wizard-session.md`
 - `wiki/README.md`

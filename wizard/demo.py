@@ -44,7 +44,7 @@ def build_demo_links(wizard_base_url: str, uhome_base_url: str) -> dict[str, str
         "publishing": f"{wizard_base_url}/app/publishing",
         "thin_gui": f"{wizard_base_url}/app/thin-gui",
         "host": f"{wizard_base_url}/app/config",
-        "legacy_gui": f"{wizard_base_url}/gui",
+        "static_gui": f"{wizard_base_url}/gui",
         "thin": f"{wizard_base_url}/thin",
         "wizard_demo_links": f"{wizard_base_url}/demo",
     }

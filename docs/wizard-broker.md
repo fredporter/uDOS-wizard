@@ -1,6 +1,8 @@
 # Wizard Broker
 
-`Wizard` remains relevant here as the family delegation broker.
+`Wizard` is a **delegation pointer**: it does not run the canonical host
+runtime; it tells callers **which service** owns the work and how to reach it
+via checked-in Ubuntu contracts.
 
 ## Role
 
