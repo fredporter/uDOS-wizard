@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from html import escape
 import sys
+from urllib.parse import quote
 
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
@@ -610,6 +611,19 @@ def demo_shell():
         )
         for label, url in payload["links"].items()
     )
+    base = payload["wizard_base_url"].rstrip("/")
+    thin_rows = [
+        ("thinui-c64", "ThinUI C64 (shell theme)"),
+        ("thinui-nes-sonic", "ThinUI NES / Sonic (shell theme)"),
+        ("thinui-teletext", "ThinUI Teletext (shell theme)"),
+    ]
+    thin_theme_lines = []
+    for adapter, title in thin_rows:
+        href = f"{base}/thin?themeAdapter={adapter}&title={quote(title)}&prosePreset=prose-default"
+        thin_theme_lines.append(
+            f'<li><strong>{escape(title)}</strong><br><a href="{escape(href)}">{escape(href)}</a></li>'
+        )
+    thin_theme_markup = "\n".join(thin_theme_lines)
     html = f"""<!doctype html>
 <html lang="en">
   <head>
@@ -677,6 +691,22 @@ def demo_shell():
       <p>Wizard base: <a href="{escape(payload["wizard_base_url"])}">{escape(payload["wizard_base_url"])}</a><br>uHOME base: <a href="{escape(payload["uhome_base_url"])}">{escape(payload["uhome_base_url"])}</a></p>
       <ul>
         {links_markup}
+      </ul>
+      <h2 style="margin-top:2.5rem;">ThinUI runtime (terminal)</h2>
+      <p>From the sibling <code>uDOS-thinui</code> checkout (ASCII frames on stdout):</p>
+      <pre style="background:#f0eadf;padding:14px 16px;border-radius:12px;overflow:auto;line-height:1.45;">cd uDOS-thinui
+bash scripts/run-thinui-checks.sh
+node scripts/demo-thinui.js --theme thinui-c64
+node scripts/demo-thinui.js --theme thinui-nes-sonic
+node scripts/demo-thinui.js --theme thinui-teletext --view teletext-display</pre>
+      <h2 style="margin-top:2rem;">Browser Thin GUI + loaded shell themes</h2>
+      <p>
+        Core <code>config/render/shell-theme-map.json</code> registers <strong>thinui-c64</strong>,
+        <strong>thinui-nes-sonic</strong>, and <strong>thinui-teletext</strong> as shell theme adapters
+        (distinct colours in the preview chrome). Open each link while this Surface stack is running.
+      </p>
+      <ul>
+        {thin_theme_markup}
       </ul>
     </main>
   </body>

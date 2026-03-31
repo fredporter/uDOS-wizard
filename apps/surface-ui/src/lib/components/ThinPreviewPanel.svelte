@@ -12,7 +12,15 @@
   };
   export let portStatus = null;
   export let onPreview = () => {};
+  /** Apply Core shell theme_adapter (e.g. thinui-c64) and refresh preview */
+  export let onApplyShellTheme = (/** @type {string} */ _adapter) => {};
   export let busy = false;
+
+  const thinUiShellThemes = [
+    { id: "thinui-c64", label: "ThinUI C64" },
+    { id: "thinui-nes-sonic", label: "ThinUI NES/Sonic" },
+    { id: "thinui-teletext", label: "ThinUI Teletext" },
+  ];
 
   function thinUrl() {
     const baseUrl = portStatus?.base_url || getApiBaseUrl();
@@ -69,6 +77,19 @@
           Compare this surface against Publishing for content output and Config for runtime bind truth.
         </p>
       </article>
+    </div>
+
+    <div class="mt-4 flex flex-wrap gap-2">
+      {#each thinUiShellThemes as row (row.id)}
+        <button
+          type="button"
+          class="rounded-full border border-line/50 bg-white/90 px-3 py-1.5 text-xs font-medium text-ink shadow-sm"
+          on:click={() => onApplyShellTheme(row.id)}
+          disabled={busy}
+        >
+          {row.label}
+        </button>
+      {/each}
     </div>
 
     <div class="mt-5 flex flex-wrap gap-2">

@@ -229,6 +229,11 @@
     }
   }
 
+  function applyThinUiShellTheme(themeAdapter) {
+    form.theme_adapter = themeAdapter;
+    return handlePreview();
+  }
+
   async function handlePreview() {
     busy = true;
     error = "";
@@ -546,7 +551,14 @@
           onSelectExport={handleSelectExport}
         />
       {:else if $activeView === "thin-gui"}
-        <ThinPreviewPanel {preview} {form} {portStatus} {busy} onPreview={handlePreview} />
+        <ThinPreviewPanel
+          {preview}
+          {form}
+          {portStatus}
+          {busy}
+          onPreview={handlePreview}
+          onApplyShellTheme={applyThinUiShellTheme}
+        />
       {:else if $activeView === "config"}
         <ConfigPanel
           {localState}

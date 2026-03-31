@@ -1,5 +1,14 @@
 # Wizard Broker
 
+## Core contracts vs host ownership
+
+JSON contracts under `uDOS-core/contracts/` may name `uDOS-wizard` as a consumer,
+policy routing surface, or queue owner. That means the **Wizard/Surface
+product** implements that lane in code — not that Wizard replaces **`uDOS-ubuntu`**
+as the canonical host. Read: `uDOS-core/docs/wizard-surface-delegation-boundary.md`.
+
+---
+
 `Wizard` is a **delegation pointer**: it does not run the canonical host
 runtime; it tells callers **which service** owns the work and how to reach it
 via checked-in Ubuntu contracts.
