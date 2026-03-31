@@ -56,7 +56,6 @@
       "policy_owner": "uDOS-wizard",
       "consumer_repos": [
         "uHOME-server",
-        "uDOS-empire",
         "sonic-screwdriver"
       ],
       "notes": "Visible public-facing lane with local vault access only and no internet sharing."
@@ -71,7 +70,6 @@
       "policy_owner": "uDOS-wizard",
       "consumer_repos": [
         "uHOME-server",
-        "uDOS-empire",
         "sonic-screwdriver"
       ],
       "notes": "Visible protected lane with local vault access only and no internet sharing."
@@ -86,7 +84,6 @@
       "policy_owner": "uDOS-wizard",
       "consumer_repos": [
         "uHOME-server",
-        "uDOS-empire",
         "sonic-screwdriver"
       ],
       "notes": "Hidden discovery-based lane with no public internet access."
@@ -104,7 +101,6 @@
       "policy_owner": "uDOS-wizard",
       "consumer_repos": [
         "uHOME-server",
-        "uDOS-empire",
         "sonic-screwdriver"
       ],
       "notes": "Household lane that may be hidden or visible, while remaining password-protected and locally hosted."

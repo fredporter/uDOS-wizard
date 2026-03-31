@@ -1,18 +1,7 @@
-# Surface Wiki
+# Wizard wiki
 
-`/wiki` is the educational lane for this family repo.
+Introductory units that belong to the **Surface** browser layer now live in the **`uDOS-surface`** repo (`uDOS-surface/wiki/`). Use that wiki as the source of truth.
 
-Use it for:
+This `uDOS-wizard/wiki/` folder remains for Wizard-specific learning material when we add it.
 
-- introductory learning units
-- quick reference material
-- cheatsheets
-- checklists
-- practical operator education tied to this module
-
-Refer to `/docs` for deeper reference and module contracts.
-
-## Current Units
-
-- `unit-01-surface-basics.md`
-  - introduces the module, walks through a practical demo, and includes a short outcome check
+Refer to `/docs` in this repo for broker contracts and architecture.

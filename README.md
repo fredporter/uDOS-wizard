@@ -87,7 +87,7 @@ Primary v2 lanes:
 - `docs/wizard-broker.md`
 - `examples/basic-wizard-session.md`
 - `wiki/README.md`
-- `wiki/unit-01-surface-basics.md`
+- `../uDOS-surface/wiki/unit-01-surface-basics.md` (canonical; duplicate archived under `.archive/wiki/`)
 - `@dev/roadmap.md`
 - `@dev/todos.md`
 - `scripts/run-surface-checks.sh`

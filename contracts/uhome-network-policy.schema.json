@@ -67,7 +67,6 @@
       "items": {
         "enum": [
           "uHOME-server",
-          "uDOS-empire",
           "sonic-screwdriver"
         ]
       }
