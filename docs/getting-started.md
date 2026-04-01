@@ -11,7 +11,8 @@ This repo is the transitional home of the `uDOS-surface` browser layer.
 bash scripts/run-surface-checks.sh
 ```
 
-3. Launch the local compatibility host:
+3. Launch the local **dev HTTP server** (FastAPI compatibility process for Surface
+   demos — not the Ubuntu runtime spine or command-centre host):
 
 ```bash
 .venv/bin/udos-surface-demo

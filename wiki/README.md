@@ -1,7 +1,6 @@
 # Wizard wiki
 
-Introductory units that belong to the **Surface** browser layer now live in the **`uDOS-surface`** repo (`uDOS-surface/wiki/`). Use that wiki as the source of truth.
-
-This `uDOS-wizard/wiki/` folder remains for Wizard-specific learning material when we add it.
+- **`unit-01-wizard-basics.md`** — orchestration vs Ubuntu host, where to read contracts, preview vs execution pointers.
+- **`uDOS-surface/wiki/`** — browser-facing Surface UI units (complementary to Wizard broker docs).
 
 Refer to `/docs` in this repo for broker contracts and architecture.

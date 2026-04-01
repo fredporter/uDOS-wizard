@@ -16,6 +16,11 @@ Do not use `/docs` for:
 - dev logs or repo-local status tracking
 - repeated copies of the same ownership split
 
+**Family checkout:** cross-repo doc surfaces —
+[`uDOS-dev/docs/family-documentation-layout.md`](../../uDOS-dev/docs/family-documentation-layout.md).
+**Intended operator journey (Wizard-led, GUI-first, Sonic):**
+[`uDOS-dev/docs/family-first-run-operator-flow.md`](../../uDOS-dev/docs/family-first-run-operator-flow.md).
+
 ## Active Docs
 
 - `activation.md`
