@@ -10,7 +10,7 @@ optional lanes are not required for this basic flow.
 
 ```bash
 bash scripts/run-surface-checks.sh
-.venv/bin/python -m wizard.main
+~/.udos/venv/wizard/bin/python -m wizard.main
 ```
 
 If port `8787` is occupied, the compatibility host auto-shifts to the next
@@ -20,13 +20,13 @@ free port unless `UDOS_SURFACE_PORT_AUTO_SHIFT=0` is set. The older
 Or, after installation:
 
 ```bash
-.venv/bin/udos-surface
+~/.udos/venv/wizard/bin/udos-surface
 ```
 
 Alternative explicit server launch:
 
 ```bash
-.venv/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
+~/.udos/venv/wizard/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
 ```
 
 ## Example Routes

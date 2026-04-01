@@ -694,7 +694,7 @@ def demo_shell():
   <body>
     <main>
       <h1>uDOS Demo Links</h1>
-      <p>Use <code>.venv/bin/udos-surface-demo</code>, <code>.venv/bin/udos-wizard-demo</code>, or <code>.venv/bin/python -m wizard.demo</code> to launch the local Surface compatibility stack, then open any lane from this page.</p>
+      <p>Use <code>~/.udos/venv/wizard/bin/udos-surface-demo</code>, <code>~/.udos/venv/wizard/bin/udos-wizard-demo</code>, or <code>~/.udos/venv/wizard/bin/python -m wizard.demo</code> to launch the local Surface compatibility stack, then open any lane from this page.</p>
       <p>Wizard base: <a href="{escape(payload["wizard_base_url"])}">{escape(payload["wizard_base_url"])}</a><br>uHOME base: <a href="{escape(payload["uhome_base_url"])}">{escape(payload["uhome_base_url"])}</a></p>
       <ul>
         {links_markup}

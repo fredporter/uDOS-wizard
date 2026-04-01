@@ -31,7 +31,7 @@ It keeps routing and policy inside `uDOS-wizard`.
 
 ```bash
 bash scripts/run-wizard-checks.sh
-.venv/bin/python -m wizard.main
+~/.udos/venv/wizard/bin/python -m wizard.main
 ```
 
 2. Open this folder in VS Code as an extension workspace:

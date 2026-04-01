@@ -36,7 +36,7 @@ From the current repo:
 
 ```bash
 bash scripts/run-wizard-checks.sh
-.venv/bin/udos-surface-demo
+~/.udos/venv/wizard/bin/udos-surface-demo
 ```
 
 Then open the local demo index:

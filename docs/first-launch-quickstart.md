@@ -32,13 +32,13 @@ bash scripts/run-surface-checks.sh
 Fastest local path:
 
 ```bash
-.venv/bin/udos-surface-demo
+~/.udos/venv/wizard/bin/udos-surface-demo
 ```
 
 Equivalent module launch:
 
 ```bash
-.venv/bin/python -m wizard.demo
+~/.udos/venv/wizard/bin/python -m wizard.demo
 ```
 
 Primary demo index:
@@ -56,7 +56,7 @@ http://127.0.0.1:8787/demo/links
 To launch without optional `uHOME-server` pairing:
 
 ```bash
-.venv/bin/udos-surface-demo --no-uhome
+~/.udos/venv/wizard/bin/udos-surface-demo --no-uhome
 ```
 
 ## Family health
@@ -75,19 +75,19 @@ Script index: [`uDOS-ubuntu/scripts/README.md`](../../uDOS-ubuntu/scripts/README
 ## Start The Service Manually
 
 ```bash
-.venv/bin/python -m wizard.main
+~/.udos/venv/wizard/bin/python -m wizard.main
 ```
 
 Alternative:
 
 ```bash
-.venv/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
+~/.udos/venv/wizard/bin/python -m uvicorn wizard.main:app --host 127.0.0.1 --port 8787
 ```
 
 If installed as a package:
 
 ```bash
-.venv/bin/udos-surface
+~/.udos/venv/wizard/bin/udos-surface
 ```
 
 Default local address:

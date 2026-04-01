@@ -15,13 +15,13 @@ bash scripts/run-surface-checks.sh
    demos — not the Ubuntu runtime spine or command-centre host):
 
 ```bash
-.venv/bin/udos-surface-demo
+~/.udos/venv/wizard/bin/udos-surface-demo
 ```
 
 Or:
 
 ```bash
-.venv/bin/python -m wizard.demo
+~/.udos/venv/wizard/bin/python -m wizard.demo
 ```
 
 4. Use `docs/first-launch-quickstart.md` for the route list and manual launch
