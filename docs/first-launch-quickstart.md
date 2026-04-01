@@ -14,6 +14,7 @@ Current first-launch surfaces:
 - Svelte operator app at `/app`
 - broker endpoints at `/wizard/*`
 - saved render exports under `/rendered/...`
+- read-only **family health** at `GET /family/health` (disk + `~/.udos` snapshot via `uDOS-ubuntu` scripts; optional full host checks)
 
 `/app` is the primary Surface-compatible operator surface. `/gui` and `/thin`
 remain compatibility lanes only.
@@ -58,6 +59,19 @@ To launch without optional `uHOME-server` pairing:
 .venv/bin/udos-surface-demo --no-uhome
 ```
 
+## Family health
+
+`GET /family/health` aggregates a read-only snapshot by running **`uDOS-ubuntu`** shell scripts from the resolved Ubuntu repo root:
+
+- **`scripts/report-udos-disk-library.sh`** always runs (home volume usage plus `~/.udos/{library,cache,state,vault,logs,sync,tmp}` sizes when present; one JSON object on stdout).
+- **`scripts/run-ubuntu-checks.sh`** runs only when you pass **`?include_ubuntu_checks=true`** (full repo validation; slower).
+
+Default leaves Ubuntu checks off so dashboards and probes stay quick.
+
+Set **`UDOS_UBUNTU_ROOT`** if `uDOS-ubuntu` is not a sibling of the other family checkouts under the same parent directory.
+
+Script index: [`uDOS-ubuntu/scripts/README.md`](../../uDOS-ubuntu/scripts/README.md).
+
 ## Start The Service Manually
 
 ```bash
@@ -97,6 +111,7 @@ http://127.0.0.1:8787/wizard/dispatch
 http://127.0.0.1:8787/render/contract
 http://127.0.0.1:8787/render/presets
 http://127.0.0.1:8787/render/exports
+http://127.0.0.1:8787/family/health
 ```
 
 Expected results:
@@ -111,6 +126,7 @@ Expected results:
 - `/render/contract` returns the shared Core-owned render contract
 - `/render/presets` returns prose presets and theme adapters
 - `/render/exports` returns saved export manifests
+- `/family/health` returns disk and `~/.udos` usage JSON from Ubuntu scripts (add `?include_ubuntu_checks=true` for full checks)
 
 ## First Render Flow
 

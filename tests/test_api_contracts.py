@@ -42,6 +42,31 @@ class APIContractTests(unittest.TestCase):
             {"service": "wizard", "status": "ok", "role": "broker-and-surface-host"},
         )
 
+    def test_family_health_delegates_to_ubuntu_scripts(self) -> None:
+        response = self.client.get("/family/health")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload.get("version"), "v1")
+        self.assertEqual(payload.get("role"), "wizard.family_health")
+        self.assertIn("ubuntu_repo", payload)
+        self.assertIn("ubuntu_repo_present", payload)
+        self.assertIn("disk_library", payload)
+        disk = payload["disk_library"]
+        self.assertTrue(
+            disk.get("skipped") or "returncode" in disk,
+            msg=disk,
+        )
+        checks = payload.get("ubuntu_checks") or {}
+        self.assertTrue(checks.get("skipped"))
+
+    def test_family_health_include_ubuntu_checks_query(self) -> None:
+        with patch("wizard.main.collect_family_health") as mocked:
+            mocked.return_value = {"version": "v1", "role": "wizard.family_health", "stub": True}
+            r = self.client.get("/family/health", params={"include_ubuntu_checks": "true"})
+            self.assertEqual(r.status_code, 200)
+            mocked.assert_called_once_with(include_ubuntu_checks=True)
+            self.assertEqual(r.json().get("stub"), True)
+
     def test_wizard_services_exposes_broker_registry(self) -> None:
         response = self.client.get("/wizard/services")
         self.assertEqual(response.status_code, 200)

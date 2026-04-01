@@ -4,7 +4,7 @@ from html import escape
 import sys
 from urllib.parse import quote
 
-from fastapi import Body, FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import ValidationError
 from fastapi.staticfiles import StaticFiles
@@ -69,6 +69,7 @@ from .uhome_bridge import (
 )
 from .workflow_state import get_workflow_store
 from .demo import build_demo_links
+from .family_health import collect_family_health
 from .broker import (
     dispatch_request as dispatch_broker_request,
     list_services as list_broker_services,
@@ -225,6 +226,12 @@ if surface_ui_dist_root.exists() and (surface_ui_dist_root / "assets").exists():
 @app.get("/")
 def root():
     return {"service": "wizard", "status": "ok", "role": "broker-and-surface-host"}
+
+
+@app.get("/family/health")
+def family_health(include_ubuntu_checks: bool = Query(default=False)):
+    """Shell out to uDOS-ubuntu disk/library snapshot; optionally full run-ubuntu-checks.sh."""
+    return collect_family_health(include_ubuntu_checks=include_ubuntu_checks)
 
 
 @app.get("/wizard/services")
