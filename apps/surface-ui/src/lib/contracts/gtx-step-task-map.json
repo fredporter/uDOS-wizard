@@ -1,0 +1,27 @@
+{
+  "map_id": "workflow-gtx-step-task-map",
+  "owner": "uDOS-themes",
+  "version": "v2.2.1",
+  "source_form_id": "setup-story",
+  "task_prefix": "gtx",
+  "mappings": [
+    {
+      "step_id": "runtime-name",
+      "task_id": "gtx-runtime-name",
+      "lane_id": "setup",
+      "title": "Confirm runtime name"
+    },
+    {
+      "step_id": "network-mode",
+      "task_id": "gtx-network-mode",
+      "lane_id": "setup",
+      "title": "Choose network mode"
+    },
+    {
+      "step_id": "vault-root",
+      "task_id": "gtx-vault-root",
+      "lane_id": "setup",
+      "title": "Set vault root"
+    }
+  ]
+}

@@ -4,6 +4,8 @@ This app now lives under `apps/surface-ui`.
 
 This is the active Svelte/Tailwind frontend for the Surface operator GUI.
 
+Themes contracts mirrored under `src/lib/contracts/` (GTX workflow step map); see `src/lib/contracts/README.md` for canonical sources and sync commands.
+
 Current scope:
 
 - render workbench against live Ubuntu-hosted services and broker-compatible APIs

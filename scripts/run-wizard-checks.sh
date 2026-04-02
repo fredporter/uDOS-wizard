@@ -52,3 +52,29 @@ if ! "$PYTHON_BIN" -c 'import wizard' >/dev/null 2>&1; then
 fi
 
 "$PYTHON_BIN" -m unittest discover -s tests -p 'test_*.py'
+
+GTX_MAP_JSON="$REPO_ROOT/apps/surface-ui/src/lib/contracts/gtx-step-task-map.json"
+if [ ! -f "$GTX_MAP_JSON" ]; then
+  echo "missing Surface GTX map: $GTX_MAP_JSON" >&2
+  exit 1
+fi
+"$PYTHON_BIN" - <<PY
+import json
+from pathlib import Path
+
+path = Path("$GTX_MAP_JSON")
+data = json.loads(path.read_text(encoding="utf-8"))
+assert data.get("map_id") == "workflow-gtx-step-task-map"
+assert data.get("owner") == "uDOS-themes"
+mappings = data.get("mappings")
+assert isinstance(mappings, list) and mappings
+for entry in mappings:
+    assert {"step_id", "task_id", "lane_id", "title"} <= entry.keys()
+PY
+
+SURFACE_UI="$REPO_ROOT/apps/surface-ui"
+if [ -f "$SURFACE_UI/package.json" ] && command -v npm >/dev/null 2>&1; then
+  (cd "$SURFACE_UI" && npm ci && npm run build)
+else
+  echo "skipping surface-ui build (npm or package.json missing)" >&2
+fi

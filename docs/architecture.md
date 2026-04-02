@@ -45,6 +45,7 @@ See `uDOS-docs/architecture/14_v2_language_runtime_spec.md` for the full languag
   policy ownership.
 - future preview and publishing APIs should consume shared render contracts from
   `uDOS-core` and shared theme packs from `uDOS-themes`.
+- Workflow GTX step alignment: mirrored copy at `apps/surface-ui/src/lib/contracts/gtx-step-task-map.json` (see `src/lib/contracts/README.md`), synced from `uDOS-themes/src/adapters/workflow/gtx-step-task-map.json`.
 
 ## Contract Edges
 

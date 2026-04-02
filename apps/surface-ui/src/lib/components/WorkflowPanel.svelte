@@ -1,4 +1,6 @@
 <script>
+  import gtxStepTaskMap from "../contracts/gtx-step-task-map.json";
+
   export let workflowState = null;
   export let workflowActions = null;
   export let orchestrationStatus = null;
@@ -47,6 +49,13 @@
       .slice(0, 3);
     return pairs.map(([key, value]) => `${key}: ${value}`).join(" / ");
   }
+
+  $: gtxMappingForStep = (() => {
+    const sid = workflowState?.step_id;
+    if (!sid) return null;
+    const list = gtxStepTaskMap.mappings ?? [];
+    return list.find((m) => m.step_id === sid) ?? null;
+  })();
 </script>
 
 <section class="grid gap-5">
@@ -94,6 +103,26 @@
       <article class="rounded-2xl border border-line/60 bg-white/70 p-4 md:col-span-2">
         <strong class="block text-base text-ink">Console Sync</strong>
         <p class="mt-2 text-sm text-muted">{lastRefreshAt || "Waiting for first sync"}</p>
+      </article>
+      <article class="rounded-2xl border border-line/60 bg-white/70 p-4 md:col-span-4">
+        <strong class="block text-base text-ink">GTX task alignment</strong>
+        <p class="mt-1 text-[11px] uppercase tracking-[0.12em] text-muted">
+          {gtxStepTaskMap.map_id} · {gtxStepTaskMap.version}
+        </p>
+        {#if gtxMappingForStep}
+          <p class="mt-2 text-sm text-muted">
+            <span class="text-ink">{gtxMappingForStep.title}</span>
+            · task <code class="rounded bg-[#f6efe4] px-1 text-xs text-ink">{gtxMappingForStep.task_id}</code>
+            · lane {gtxMappingForStep.lane_id}
+          </p>
+        {:else if workflowState?.step_id}
+          <p class="mt-2 text-sm text-muted">
+            No GTX map entry for step
+            <code class="rounded bg-[#f6efe4] px-1 text-xs text-ink">{workflowState.step_id}</code>.
+          </p>
+        {:else}
+          <p class="mt-2 text-sm text-muted">No active step; map is ready when workflow state includes <code class="text-xs">step_id</code>.</p>
+        {/if}
       </article>
     </div>
   </article>
