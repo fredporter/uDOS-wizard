@@ -11,7 +11,7 @@ Two bounded roles:
 - **Wizard:** **delegation broker**—classify intent, resolve the correct family
   service, return a delegation envelope. It **points** at Ubuntu-hosted
   contracts (`wizard-host-surface.v1.json`); it does **not** store base config,
-  vault, sync, budgets, or secrets (those live on `uDOS-ubuntu`).
+  vault, sync, budgets, or secrets (those live on `uDOS-host`).
 
 ## Ownership
 

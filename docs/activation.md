@@ -2,7 +2,7 @@
 
 This repo is active as the family **browser Surface** and **Wizard** lane.
 **Wizard** is a **delegation broker** only (see `docs/wizard-broker.md`); runtime
-authority stays on `uDOS-ubuntu`.
+authority stays on `uDOS-host`.
 
 ## Active surfaces
 

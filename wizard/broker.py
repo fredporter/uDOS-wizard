@@ -116,13 +116,13 @@ def _core_contract_records() -> list[ServiceRecord]:
     return records
 
 
-def _ubuntu_contract_records() -> list[ServiceRecord]:
+def _host_contract_records() -> list[ServiceRecord]:
     family_root = _family_root()
-    host_surface_path = family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "wizard-host-surface.v1.json"
-    minimum_ops_path = family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "minimum-operations.v1.json"
+    host_surface_path = family_root / "uDOS-host" / "contracts" / "udos-commandd" / "wizard-host-surface.v1.json"
+    minimum_ops_path = family_root / "uDOS-host" / "contracts" / "udos-commandd" / "minimum-operations.v1.json"
     explicit_surface_paths = (
-        family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "okd-surface.v1.json",
-        family_root / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "library-surface.v1.json",
+        family_root / "uDOS-host" / "contracts" / "udos-commandd" / "okd-surface.v1.json",
+        family_root / "uDOS-host" / "contracts" / "udos-commandd" / "library-surface.v1.json",
     )
     records: list[ServiceRecord] = []
 
@@ -134,8 +134,8 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
         if host_capabilities:
             records.append(
                 ServiceRecord(
-                    service_id="uDOS-ubuntu",
-                    owner=str(payload.get("owner") or "uDOS-ubuntu"),
+                    service_id="uDOS-host",
+                    owner=str(payload.get("owner") or "uDOS-host"),
                     surface="host",
                     capabilities=host_capabilities,
                     routes=tuple(payload.get("operations", [])),
@@ -155,8 +155,8 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
         explicit_surfaces.add(str(payload.get("surface") or ""))
         records.append(
             ServiceRecord(
-                service_id=str(payload.get("service_id") or "uDOS-ubuntu"),
-                owner=str(payload.get("owner") or "uDOS-ubuntu"),
+                service_id=str(payload.get("service_id") or "uDOS-host"),
+                owner=str(payload.get("owner") or "uDOS-host"),
                 surface=str(payload.get("surface") or "unknown"),
                 capabilities=tuple(str(capability) for capability in payload.get("capabilities", [])),
                 routes=tuple(payload.get("routes", [])),
@@ -220,8 +220,8 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
     for surface, entry in grouped.items():
         records.append(
             ServiceRecord(
-                service_id="uDOS-ubuntu",
-                owner="uDOS-ubuntu",
+                service_id="uDOS-host",
+                owner="uDOS-host",
                 surface=surface,
                 capabilities=tuple(sorted(entry["capabilities"])),
                 routes=tuple(),
@@ -236,7 +236,7 @@ def _ubuntu_contract_records() -> list[ServiceRecord]:
 
 
 def _all_service_records() -> list[ServiceRecord]:
-    return _core_contract_records() + _ubuntu_contract_records() + _local_surface_records()
+    return _core_contract_records() + _host_contract_records() + _local_surface_records()
 
 
 def list_services() -> list[dict[str, Any]]:
@@ -258,8 +258,10 @@ def list_services() -> list[dict[str, Any]]:
 
 
 def _service_base_url(service_id: str) -> str:
-    if service_id == "uDOS-ubuntu":
-        return get_str("UDOS_UBUNTU_BASE_URL", "http://127.0.0.1:8991").rstrip("/")
+    if service_id in {"uDOS-host", "uDOS-ubuntu"}:
+        host = get_str("UDOS_HOST_BASE_URL", "").strip()
+        legacy = get_str("UDOS_UBUNTU_BASE_URL", "http://127.0.0.1:8991").rstrip("/")
+        return (host or legacy).rstrip("/")
     if service_id in {"uDOS-surface", "uDOS-wizard"}:
         return get_str("UDOS_SURFACE_BASE_URL", "http://127.0.0.1:8787").rstrip("/")
     return ""

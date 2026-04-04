@@ -4,7 +4,7 @@
 
 JSON contracts under `uDOS-core/contracts/` may name `uDOS-wizard` as a consumer,
 policy routing surface, or queue owner. That means the **Wizard/Surface
-product** implements that lane in code — not that Wizard replaces **`uDOS-ubuntu`**
+product** implements that lane in code — not that Wizard replaces **`uDOS-host`**
 as the canonical host. Read: `uDOS-core/docs/wizard-surface-delegation-boundary.md`.
 
 ---
@@ -34,8 +34,8 @@ It does not own runtime execution.
 The broker now prefers contract-backed discovery:
 
 - `uDOS-core/contracts/runtime-services.json`
-- `uDOS-ubuntu/contracts/udos-commandd/wizard-host-surface.v1.json`
-- `uDOS-ubuntu/contracts/udos-commandd/minimum-operations.v1.json`
+- `uDOS-host/contracts/udos-commandd/wizard-host-surface.v1.json`
+- `uDOS-host/contracts/udos-commandd/minimum-operations.v1.json`
 - `contracts/surface-render-surface.v1.json`
 - `contracts/wizard-broker-contract.json`
 
@@ -57,7 +57,7 @@ Typical result:
 ```json
 {
   "status": "delegated",
-  "destination_service": "uDOS-ubuntu",
+  "destination_service": "uDOS-host",
   "destination_surface": "okd",
   "capability": "ok.transformation"
 }
@@ -68,7 +68,7 @@ Dispatch result:
 ```json
 {
   "status": "dispatched",
-  "destination_service": "uDOS-ubuntu",
+  "destination_service": "uDOS-host",
   "destination_surface": "okd",
   "route": {
     "method": "POST",

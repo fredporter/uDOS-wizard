@@ -14,7 +14,7 @@ Current first-launch surfaces:
 - Svelte operator app at `/app`
 - broker endpoints at `/wizard/*`
 - saved render exports under `/rendered/...`
-- read-only **family health** at `GET /family/health` (disk + `~/.udos` snapshot via `uDOS-ubuntu` scripts; optional full host checks)
+- read-only **family health** at `GET /family/health` (disk + `~/.udos` snapshot via `uDOS-host` scripts; optional full host checks)
 
 `/app` is the primary Surface-compatible operator surface. `/gui` and `/thin`
 remain compatibility lanes only.
@@ -61,16 +61,16 @@ To launch without optional `uHOME-server` pairing:
 
 ## Family health
 
-`GET /family/health` aggregates a read-only snapshot by running **`uDOS-ubuntu`** shell scripts from the resolved Ubuntu repo root:
+`GET /family/health` aggregates a read-only snapshot by running **`uDOS-host`** shell scripts from the resolved Ubuntu repo root:
 
 - **`scripts/report-udos-disk-library.sh`** always runs (home volume usage plus `~/.udos/{library,cache,state,vault,logs,sync,tmp}` sizes when present; one JSON object on stdout).
 - **`scripts/run-ubuntu-checks.sh`** runs only when you pass **`?include_ubuntu_checks=true`** (full repo validation; slower).
 
 Default leaves Ubuntu checks off so dashboards and probes stay quick.
 
-Set **`UDOS_UBUNTU_ROOT`** if `uDOS-ubuntu` is not a sibling of the other family checkouts under the same parent directory.
+Set **`UDOS_HOST_ROOT`** (or legacy **`UDOS_UBUNTU_ROOT`**) if `uDOS-host` is not a sibling of the other family checkouts under the same parent directory.
 
-Script index: [`uDOS-ubuntu/scripts/README.md`](../../uDOS-ubuntu/scripts/README.md).
+Script index: [`uDOS-host/scripts/README.md`](../../uDOS-host/scripts/README.md).
 
 ## Start The Service Manually
 

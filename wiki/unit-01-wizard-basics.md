@@ -4,7 +4,7 @@
 
 `uDOS-wizard` is the **orchestration and browser operator** lane: MCP adapters,
 workflow execution, and the dev-time HTTP surface that presents operator UI. It
-is **not** the long-running command-centre host (that is **`uDOS-ubuntu`**).
+is **not** the long-running command-centre host (that is **`uDOS-host`**).
 
 ## What You Should Learn
 

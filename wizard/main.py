@@ -98,7 +98,7 @@ def _family_root() -> Path:
 
 
 def _ubuntu_host_surface_contract_path() -> Path:
-    return _family_root() / "uDOS-ubuntu" / "contracts" / "udos-commandd" / "wizard-host-surface.v1.json"
+    return _family_root() / "uDOS-host" / "contracts" / "udos-commandd" / "wizard-host-surface.v1.json"
 
 
 def _ubuntu_host_surface_contract() -> dict[str, object]:
@@ -107,7 +107,7 @@ def _ubuntu_host_surface_contract() -> dict[str, object]:
         return json.loads(path.read_text(encoding="utf-8"))
     return {
         "version": "v1",
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "consumer": "uDOS-wizard",
         "base_path": "/host",
         "operations": [],
@@ -230,7 +230,7 @@ def root():
 
 @app.get("/family/health")
 def family_health(include_ubuntu_checks: bool = Query(default=False)):
-    """Shell out to uDOS-ubuntu disk/library snapshot; optionally full run-ubuntu-checks.sh."""
+    """Shell out to uDOS-host disk/library snapshot; optionally full run-ubuntu-checks.sh."""
     return collect_family_health(include_ubuntu_checks=include_ubuntu_checks)
 
 
@@ -854,7 +854,7 @@ def get_host_contract():
 @app.get("/host/runtime-summary")
 def get_host_runtime_summary():
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/config/runtime-summary",
@@ -866,7 +866,7 @@ def get_host_runtime_summary():
 def get_host_local_state():
     ensure_install_id()
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/config/local-state",
@@ -877,7 +877,7 @@ def get_host_local_state():
 @app.post("/host/local-state")
 def post_host_local_state(payload: dict = Body(...)):
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/config/local-state",
@@ -890,7 +890,7 @@ def get_host_secrets():
     store = get_secret_store()
     keys = store.list_secret_keys()
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/config/secrets",
@@ -907,7 +907,7 @@ def post_host_secret(payload: dict = Body(...)):
         return {"status": "error", "detail": "key is required"}
     get_secret_store().set_secret(key, value)
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/config/secrets",
@@ -919,7 +919,7 @@ def post_host_secret(payload: dict = Body(...)):
 @app.get("/host/budget-status")
 def get_host_budget_status():
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/budget",
@@ -931,7 +931,7 @@ def get_host_budget_status():
 def get_host_providers():
     providers = ok_provider_registry.list_providers(enabled_only=False)
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/ok/providers",
@@ -944,7 +944,7 @@ def get_host_providers():
 @app.get("/host/orchestration-status")
 def get_host_orchestration_status():
     return {
-        "owner": "uDOS-ubuntu",
+        "owner": "uDOS-host",
         "bridge": "uDOS-wizard",
         "status": "compatibility-bridge",
         "deprecated_source_route": "/orchestration/status",

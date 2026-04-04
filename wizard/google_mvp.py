@@ -21,7 +21,7 @@ def get_google_mvp_lane_bundle() -> dict[str, Any]:
         "repo_targets": {
             "uDOS-empire": "Firestore mirror + Cloud Run binder supervision",
             "uDOS-gameplay": "multiplayer crypt-placement world",
-            "uDOS-ubuntu": "always-on local mirror/cache host",
+            "uDOS-host": "always-on local mirror/cache host",
         },
         "non_negotiables": [
             "uDOS-core remains canonical truth",

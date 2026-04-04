@@ -11,13 +11,13 @@ Repo path `uDOS-wizard`; product layer **Surface** (browser) + **Wizard**
 | **Wizard** | `/wizard/*` broker: classify intent, resolve services, return **delegation envelopes** (`docs/wizard-broker.md`) | Ubuntu host policy, secrets store, always-on daemon **authority** |
 | **`wizard.main` process** | Compatibility FastAPI host that mounts Surface + broker + MCP adapters | Not a second runtime spine; host spine stays on **Ubuntu** |
 
-`GET /family/health` is a read-only operator probe: it shells out to **`uDOS-ubuntu`** (`report-udos-disk-library.sh`, and optionally `run-ubuntu-checks.sh`) rather than re-implementing host metrics in Python. See `docs/first-launch-quickstart.md` § Family health.
+`GET /family/health` is a read-only operator probe: it shells out to **`uDOS-host`** (`report-udos-disk-library.sh`, and optionally `run-ubuntu-checks.sh`) rather than re-implementing host metrics in Python. See `docs/first-launch-quickstart.md` § Family health.
 
 Core contracts that name `uDOS-wizard` identify the **Wizard/Surface implementation** for a workflow lane, not a rewrite of host ownership. See `uDOS-core/docs/wizard-surface-delegation-boundary.md`.
 
 uDOS Surface is the browser GUI, publishing, and themed presentation layer for
 the public family. It is not the base always-on command centre. **Wizard** does
-not own host policy or persistence—it **delegates** to `uDOS-ubuntu` surfaces
+not own host policy or persistence—it **delegates** to `uDOS-host` surfaces
 defined in `wizard-host-surface.v1.json`.
 
 **Family GUI contract** (shared vocabulary across repos): [`uDOS-dev/docs/gui-system-family-contract.md`](../../uDOS-dev/docs/gui-system-family-contract.md).
@@ -54,7 +54,7 @@ See `uDOS-docs/architecture/14_v2_language_runtime_spec.md` for the full languag
   Surface preview and publish flows.
 - `uDOS-core` owns the uCode verb contract and script document contract —
   Surface consumes these for story rendering.
-- `uDOS-ubuntu` should host the base runtime, vault, scheduling, networking,
+- `uDOS-host` should host the base runtime, vault, scheduling, networking,
   budgeting, policy, API access, and command-centre surfaces.
 - `uHOME-server` should consume Ubuntu-owned network contracts where `uHOME`
   needs local-network pairing, beacon access, and LAN-adjacent workflows.
