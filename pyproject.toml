@@ -9,6 +9,9 @@ description = "uDOS surface browser host and compatibility service"
 requires-python = ">=3.11"
 dependencies = ["cryptography", "fastapi", "uvicorn"]
 
+[project.optional-dependencies]
+dev = ["httpx", "pytest"]
+
 [project.scripts]
 udos-surface = "wizard.main:run"
 udos-surface-demo = "wizard.demo:main"
